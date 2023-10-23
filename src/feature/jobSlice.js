@@ -55,7 +55,7 @@ export const importJob = createAsyncThunk('ImportJob/jobs', async (data, ThunkAp
   } catch (error) {
     return error;
   }
-});
+}); 
 
 export const jobSlice = createSlice({
   name: 'jobs',
