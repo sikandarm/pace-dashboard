@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { filter } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Card,
@@ -40,22 +39,6 @@ const TABLE_HEAD = [
   { id: "Actions", label: "", alignRight: false },
 ];
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
 export default function Contacts() {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
@@ -66,6 +49,8 @@ export default function Contacts() {
   const [formErrors, setFormErrors] = useState({});
   const [selectedRow, setSelectedRow] = useState();
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [searchResults, setSearchResults] = useState([]);
+  console.log(formErrors, "==========");
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const { loginUser } = useSelector((state) => state.userSlice);
   const { permissions: userPermissions } = loginUser.decodedToken;
@@ -80,23 +65,22 @@ export default function Contacts() {
   );
 
   const contacts = useSelector((state) => state.ContactSlice.contacts);
-    console.log("length",contacts.length);
   const fetchContacts = async () => {
     try {
       const response = await ApiCall.get("/contact");
       dispatch(getContacts(response.data.data));
     } catch (error) {}
   };
+
   useEffect(() => {
     fetchContacts();
-  }, []);
+  }, [dispatch]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = contacts.map((n) => n.name);
@@ -105,35 +89,42 @@ export default function Contacts() {
     }
     setSelected([]);
   };
-  function applySortFilter(array, comparator, query) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
-      if (order !== 0) return order;
-      return a[1] - b[1];
-    });
-    if (query) {
-      return filter(
-        contacts,
-        (_inv) =>
-          _inv.firstName.toLowerCase().indexOf(query.toLowerCase()) !== -1
-      );
-    }
-    return stabilizedThis.map((el) => el[0]);
-  }
+
+  const fetchPage = async () => {
+    try {
+      const response = await ApiCall.get("/contact", {
+        params: {
+          page: page + 1,
+        },
+      });
+      contacts(response.data.data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchPage();
+  }, [page]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  };
+
+  const handleDelete = (id) => {
+    dispatch(deleteContact(id));
   };
 
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSearch();
+    }
   };
 
   const handleEnterKeyPress = (event) => {
@@ -145,18 +136,7 @@ export default function Contacts() {
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - contacts.length) : 0;
-
-  const filteredUsers = applySortFilter(
-    contacts,
-    getComparator(order, orderBy),
-    filterName
-  );
-
-  const isNotFound = !filteredUsers.length && !!filterName;
-  const handleDelete = (id) => {
-    dispatch(deleteContact(id));
-  };
-
+  const isNotFound = !contacts.length && !!filterName;
   const [open, setOpen] = useState(false);
 
   const initialNewContact = {
@@ -185,6 +165,7 @@ export default function Contacts() {
         if (response.status === 201) {
           const newContact = response.data;
           handleClose();
+          window.location.reload();
           dispatch(getContacts([...contacts, newContact]));
           setNewContact({ ...initialNewContact });
         } else {
@@ -194,23 +175,31 @@ export default function Contacts() {
   };
 
   const handleUpdateContact = async () => {
-    try {
-      const response = await ApiCall.put(
-        `contact/${selectedRow.id}`,
-        selectedRow
-      );
+    const values = validateContactForm(selectedRow);
 
-      if (response.status === 200) {
-        const updatedContact = response.data;
-        const updatedContacts = contacts.map((contact) =>
-          contact.id === updatedContact.id ? updatedContact : contact
+    setFormErrors(values);
+    if (Object.keys(values).length === 0) {
+      try {
+        const response = await ApiCall.put(
+          `contact/${selectedRow.id}`,
+          selectedRow
         );
-        handleClose();
-        dispatch(getContacts(updatedContacts));
-        setOpenUpdateModel(false);
-      } else {
+
+        if (response.status === 200) {
+          const updatedContact = response.data;
+          const updatedContacts = contacts.map((contact) =>
+            contact.id === updatedContact.id ? updatedContact : contact
+          );
+          handleClose();
+          window.location.reload();
+          dispatch(getContacts(updatedContacts));
+          setOpenUpdateModel(false);
+        } else {
+        }
+      } catch (error) {
+        // console.log(error.response.data.message, "+++");
       }
-    } catch (error) {}
+    }
   };
 
   const handleOpenModel = () => {
@@ -233,7 +222,7 @@ export default function Contacts() {
           firstName: filterName,
         },
       });
-      contacts(response.data.data);
+      setSearchResults(response.data.data.contacts);
     } catch (error) {}
   };
   useEffect(() => {
@@ -289,6 +278,8 @@ export default function Contacts() {
                         firstName: e.target.value,
                       })
                     }
+                    error={formErrors.firstName !== undefined}
+                    helperText={formErrors.firstName}
                   />
 
                   <TextField
@@ -303,6 +294,8 @@ export default function Contacts() {
                         lastName: e.target.value,
                       })
                     }
+                    error={formErrors.lastName !== undefined}
+                    helperText={formErrors.lastName}
                   />
                   <TextField
                     label="Email"
@@ -313,6 +306,8 @@ export default function Contacts() {
                     onChange={(e) =>
                       setSelectedRow({ ...selectedRow, email: e.target.value })
                     }
+                    error={formErrors.email !== undefined}
+                    helperText={formErrors.email}
                   />
                   <TextField
                     label="Phone Number"
@@ -326,6 +321,8 @@ export default function Contacts() {
                         phoneNumber: e.target.value,
                       })
                     }
+                    error={formErrors.phoneNumber !== undefined}
+                    helperText={formErrors.phoneNumber}
                   />
                 </DialogContent>
                 <DialogActions>
@@ -453,7 +450,7 @@ export default function Contacts() {
                     onSelectAllClick={handleSelectAllClick}
                   />
                   <TableBody>
-                    {filteredUsers
+                    {searchResults
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
@@ -463,7 +460,7 @@ export default function Contacts() {
                           contact;
                         return (
                           <TableRow hover key={id} tabIndex={-1}>
-                            <TableCell component="th" scope="row">
+                            <TableCell component="th" scope="row" padding="100">
                               {firstName}
                             </TableCell>
                             <TableCell align="left">{lastName}</TableCell>

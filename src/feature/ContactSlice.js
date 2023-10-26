@@ -34,6 +34,7 @@ export const updateContact = createAsyncThunk(
     try {
       const res = await ApiCall.put(`/contact/${data.id}`, data);
       console.log(res);
+      
       return res.data;
     } catch (error) {
       const { message } = error.response.data;
@@ -48,6 +49,7 @@ export const deleteContact = createAsyncThunk(
     try {
       const res = await ApiCall.delete(`/contact/${data}`);
       if (res.data.success) {
+        window.location.reload();
         return data;
       }
     } catch (error) {
