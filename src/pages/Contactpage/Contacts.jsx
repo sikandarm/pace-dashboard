@@ -27,14 +27,14 @@ import { HomeRounded } from "@material-ui/icons";
 import Iconify from "../../components/iconify";
 import ApiCall from "../../utils/apicall";
 import Scrollbar from "../../components/scrollbar";
-import { UserListHead, UserListToolbar } from "../../sections/@dashboard/user";
+import { UserListHead } from "../../sections/@dashboard/user";
 import { deleteContact, getContacts } from "../../feature/ContactSlice";
 import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 import { validateContactForm } from "../../utils/ContactFormValidation";
 
 const TABLE_HEAD = [
   { id: "firstName", label: "First Name", alignRight: false },
-  { id: "lasttName", label: "Last Name", alignRight: false },
+  { id: "lastName", label: "Last Name", alignRight: false },
   { id: "email", label: "Email", alignRight: false },
   { id: "phoneNumber", label: "Phone Number", alignRight: false },
   { id: "Actions", label: "", alignRight: false },
@@ -60,16 +60,13 @@ export default function Contacts() {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState("asc");
-  const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState("");
+  const [selected, setSelected] = useState([]);
   const [filterName, setFilterName] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchResults, setSearchResults] = useState([]);
-
   const [formErrors, setFormErrors] = useState({});
   const [selectedRow, setSelectedRow] = useState();
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
-
   const { loginUser } = useSelector((state) => state.userSlice);
   const { permissions: userPermissions } = loginUser.decodedToken;
   const canAddContact = hasPermission(userPermissions, PERMISSIONS.ADD_CONTACT);
@@ -83,7 +80,7 @@ export default function Contacts() {
   );
 
   const contacts = useSelector((state) => state.ContactSlice.contacts);
-
+    console.log("length",contacts.length);
   const fetchContacts = async () => {
     try {
       const response = await ApiCall.get("/contact");
@@ -99,6 +96,7 @@ export default function Contacts() {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelecteds = contacts.map((n) => n.name);
@@ -107,7 +105,6 @@ export default function Contacts() {
     }
     setSelected([]);
   };
-
   function applySortFilter(array, comparator, query) {
     const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
@@ -130,20 +127,19 @@ export default function Contacts() {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setPage(0);
     setRowsPerPage(parseInt(event.target.value, 10));
-  };
-
-  const handleDelete = (id) => {
-    dispatch(deleteContact(id));
+    setPage(0);
   };
 
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
-    handleSearch();
-    if (event.target.value === "") {
-      setSearchResults([]);
+  };
+
+  const handleEnterKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSearch();
     }
   };
 
@@ -155,7 +151,12 @@ export default function Contacts() {
     getComparator(order, orderBy),
     filterName
   );
+
   const isNotFound = !filteredUsers.length && !!filterName;
+  const handleDelete = (id) => {
+    dispatch(deleteContact(id));
+  };
+
   const [open, setOpen] = useState(false);
 
   const initialNewContact = {
@@ -232,9 +233,12 @@ export default function Contacts() {
           firstName: filterName,
         },
       });
-      setSearchResults(response.data.data);
+      contacts(response.data.data);
     } catch (error) {}
   };
+  useEffect(() => {
+    handleSearch();
+  }, []);
 
   return (
     <>
@@ -267,7 +271,6 @@ export default function Contacts() {
                 New Contact
               </Button>
             )}
-
             {openUpdateModel && (
               <Dialog open={openUpdateModel} onClose={handleClose}>
                 <DialogTitle style={{ background: "#2196F3", color: "#fff" }}>
@@ -418,11 +421,13 @@ export default function Contacts() {
                 alignItems: "center",
               }}
             >
-              <UserListToolbar
-                label={"Search Contact.."}
-                numSelected={selected.length}
-                filterName={filterName}
-                onFilterName={handleFilterByName}
+              <TextField
+                label="Search Contact.."
+                variant="outlined"
+                margin="normal"
+                value={filterName}
+                onChange={handleFilterByName}
+                onKeyDown={handleEnterKeyPress}
               />
 
               <TablePagination
@@ -458,7 +463,7 @@ export default function Contacts() {
                           contact;
                         return (
                           <TableRow hover key={id} tabIndex={-1}>
-                            <TableCell component="th" scope="row" padding="100">
+                            <TableCell component="th" scope="row">
                               {firstName}
                             </TableCell>
                             <TableCell align="left">{lastName}</TableCell>
