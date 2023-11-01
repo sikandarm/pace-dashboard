@@ -13,9 +13,9 @@ const icon = (name) => (
 
 const navConfig = [
   {
-    title: 'dashboard',
-    path: '/dashboard/app',
-    icon: icon('ic_analytics'),
+    title: "dashboard",
+    path: "/dashboard/app",
+    icon: icon("ic_analytics"),
   },
   {
     title: "Permissions",
@@ -80,6 +80,16 @@ const navConfig = [
   {
     title: "Contact",
     path: "/contacts",
+    icon: icon("ic_cart"),
+    requiredPermission: [
+      PERMISSIONS.VIEW_CONTACT,
+      PERMISSIONS.ADD_CONTACT,
+      PERMISSIONS.EXPORT_CONTACT,
+    ],
+  },
+  {
+    title: "PurchaseOrder",
+    path: "/purchaseOrder",
     icon: icon("ic_cart"),
     requiredPermission: [
       PERMISSIONS.VIEW_CONTACT,

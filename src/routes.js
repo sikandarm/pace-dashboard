@@ -16,6 +16,9 @@ import Roles from "./pages/Roles/Roles";
 import Users from "./pages/Users/Users";
 import Permissions from "./pages/Permissions/Permissions";
 import Contacts from "./pages/Contactpage/Contacts";
+import PurchaseOrder from "./pages/PurchaseOrder/PurchaseOrder";
+import PurchaseOrderForm from "./pages/PurchaseOrder/PurchaseOrderForm.jsx";
+import Details from "./pages/PurchaseOrder/Details";
 // ----------------------------------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
 import PasswordResetPage from "./pages/PasswordResetPage";
@@ -38,7 +41,11 @@ export default function Router() {
         { path: "roles", element: <Roles /> },
         { path: "jobs", element: <Jobs /> },
         { path: "contacts", element: <Contacts /> },
+        { path: "purchaseOrder", element: <PurchaseOrder /> },
         { path: "inventory", element: <Inventory /> },
+        { path: "PurchaseOrderForm", element: <PurchaseOrderForm /> },
+        { path: "Details/:id", element: <Details /> },
+        { path: "PurchaseOrderForm/:id", element: <PurchaseOrderForm /> },
         { path: "tasks", element: <Tasks /> },
         { path: "permissions", element: <Permissions dispatch={dispatch} /> },
       ],

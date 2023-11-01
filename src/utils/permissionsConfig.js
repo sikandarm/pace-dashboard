@@ -34,6 +34,10 @@ const PERMISSIONS = {
   EXPORT_CONTACT: "export_contact",
   EDIT_CONTACT: "edit_contact",
   DELETE_CONTACT: "delete_contact",
+  ADD_PURCHASE: "add_purchase",
+  EDIT_PURCHASE: "edit_purchase",
+  DELETE_PURCHASE: "delete_purchase",
+  VIEW_PURCHASEDETAIS: "view_purchasedetails",
 };
 
 export default PERMISSIONS;

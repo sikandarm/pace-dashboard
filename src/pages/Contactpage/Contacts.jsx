@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -50,7 +50,6 @@ export default function Contacts() {
   const [selectedRow, setSelectedRow] = useState();
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchResults, setSearchResults] = useState([]);
-  console.log(formErrors, "==========");
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const { loginUser } = useSelector((state) => state.userSlice);
   const { permissions: userPermissions } = loginUser.decodedToken;
@@ -63,16 +62,17 @@ export default function Contacts() {
     userPermissions,
     PERMISSIONS.DELETE_CONTACT
   );
-
   const contacts = useSelector((state) => state.ContactSlice.contacts);
-  const fetchContacts = async () => {
-    try {
-      const response = await ApiCall.get("/contact");
-      dispatch(getContacts(response.data.data));
-    } catch (error) {}
-  };
-
   useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await ApiCall.get("/contact");
+        dispatch(getContacts(response.data.data));
+      } catch (error) {
+        // Handle error
+      }
+    };
+
     fetchContacts();
   }, [dispatch]);
 
@@ -98,9 +98,10 @@ export default function Contacts() {
         },
       });
       contacts(response.data.data);
-    } catch (error) {}
+    } catch (error) {
+      // Handle error
+    }
   };
-
   useEffect(() => {
     fetchPage();
   }, [page]);
@@ -136,7 +137,7 @@ export default function Contacts() {
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - contacts.length) : 0;
-  const isNotFound = !contacts.length && !!filterName;
+  const isNotFound = !searchResults.length && !!filterName;
   const [open, setOpen] = useState(false);
 
   const initialNewContact = {
@@ -164,6 +165,7 @@ export default function Contacts() {
 
         if (response.status === 201) {
           const newContact = response.data;
+          setFormErrors("");
           handleClose();
           window.location.reload();
           dispatch(getContacts([...contacts, newContact]));
@@ -196,9 +198,7 @@ export default function Contacts() {
           setOpenUpdateModel(false);
         } else {
         }
-      } catch (error) {
-        // console.log(error.response.data.message, "+++");
-      }
+      } catch (error) {}
     }
   };
 
@@ -207,13 +207,14 @@ export default function Contacts() {
   };
 
   const handleClose = () => {
+    setFormErrors("");
     setOpenUpdateModel(false);
     setOpen(false);
   };
 
-  useEffect(() => {
-    dispatch(getContacts());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getContacts());
+  // }, []);
 
   const handleSearch = async () => {
     try {
