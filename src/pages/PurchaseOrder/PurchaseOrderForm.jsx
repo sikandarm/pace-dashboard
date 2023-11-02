@@ -10,9 +10,10 @@ import {
   Box,
 } from "@mui/material";
 import ApiCall from "../../utils/apicall";
-
+import { validatePurchaseOrderForm } from "../../utils/PurchaseValidation";
 function PurchaseOrderForm() {
   const { id } = useParams();
+  const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
     company_name: "",
     delivery_date: "",
@@ -32,6 +33,8 @@ function PurchaseOrderForm() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [isFormInitialized, setIsFormInitialized] = useState(false);
+
   const navigate = useNavigate();
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -50,30 +53,46 @@ function PurchaseOrderForm() {
         console.error("An error occurred:", error);
       }
     };
-
     if (id) {
       setIsUpdateMode(true);
       fetchPurchaseOrderData();
     }
+    setIsFormInitialized(true);
   }, [id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
+    if (!isFormInitialized) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const values = validatePurchaseOrderForm(formData);
+    setFormErrors(values.errors);
 
     try {
       let response;
-
       if (id) {
-        response = await ApiCall.put(`/purchaseOrder/${id}`, formData);
+        if (Object.keys(values.errors).length === 0) {
+          response = await ApiCall.put(`/purchaseOrder/${id}`, formData);
+          if (response.status === 200 || response.status === 201) {
+            console.log("Data", id ? "Updated" : "Created");
+            navigate("/PurchaseOrder");
+          } else {
+            // Handle error
+          }
+        }
       } else {
-        response = await ApiCall.post("/purchaseOrder", formData);
-      }
-
-      if (response.status === 200 || response.status === 201) {
-        console.log("Data", id ? "Updated" : "Created");
-        navigate("/PurchaseOrder");
-      } else {
+        if (Object.keys(values.errors).length === 0) {
+          response = await ApiCall.post("/purchaseOrder", formData);
+          if (response.status === 200 || response.status === 201) {
+            console.log("Data", id ? "Updated" : "Created");
+            navigate("/PurchaseOrder");
+          } else {
+            // Handle error
+          }
+        }
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -97,6 +116,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.company_name}
                   onChange={handleChange}
+                  error={formErrors.company_name !== undefined}
+                  helperText={formErrors.company_name}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -108,6 +129,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.delivery_date}
                   onChange={handleChange}
+                  error={formErrors.delivery_date !== undefined}
+                  helperText={formErrors.delivery_date}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -118,6 +141,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.confirm_with}
                   onChange={handleChange}
+                  error={formErrors.confirm_with !== undefined}
+                  helperText={formErrors.confirm_with}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -128,6 +153,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.vendor_name}
                   onChange={handleChange}
+                  error={formErrors.vendor_name !== undefined}
+                  helperText={formErrors.vendor_name}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -139,6 +166,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.order_date}
                   onChange={handleChange}
+                  error={formErrors.order_date !== undefined}
+                  helperText={formErrors.order_date}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -149,6 +178,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.placed_via}
                   onChange={handleChange}
+                  error={formErrors.placed_via !== undefined}
+                  helperText={formErrors.placed_via}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -159,6 +190,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.po_number}
                   onChange={handleChange}
+                  error={formErrors.po_number !== undefined}
+                  helperText={formErrors.po_number}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -169,6 +202,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.ship_via}
                   onChange={handleChange}
+                  error={formErrors.ship_via !== undefined}
+                  helperText={formErrors.ship_via}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -179,6 +214,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.order_by}
                   onChange={handleChange}
+                  error={formErrors.order_by !== undefined}
+                  helperText={formErrors.order_by}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -189,6 +226,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.ship_to}
                   onChange={handleChange}
+                  error={formErrors.ship_to !== undefined}
+                  helperText={formErrors.ship_to}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -199,6 +238,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.address}
                   onChange={handleChange}
+                  error={formErrors.address !== undefined}
+                  helperText={formErrors.address}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -209,6 +250,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.phone}
                   onChange={handleChange}
+                  error={formErrors.phone !== undefined}
+                  helperText={formErrors.phone}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -219,6 +262,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.email}
                   onChange={handleChange}
+                  error={formErrors.email !== undefined}
+                  helperText={formErrors.email}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -229,6 +274,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.term}
                   onChange={handleChange}
+                  error={formErrors.term !== undefined}
+                  helperText={formErrors.term}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -239,6 +286,8 @@ function PurchaseOrderForm() {
                   fullWidth
                   value={formData.fax}
                   onChange={handleChange}
+                  error={formErrors.fax !== undefined}
+                  helperText={formErrors.fax}
                 />
               </Grid>
               <Grid item xs={12}>

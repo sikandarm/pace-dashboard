@@ -12,6 +12,7 @@ import {
   Dialog,
   Breadcrumbs,
   MenuItem,
+  TablePagination,
   DialogContent,
   DialogActions,
   DialogTitle,
@@ -34,10 +35,12 @@ const TABLE_HEAD = [
 ];
 
 export default function PurchaseOrder() {
+  const [page, setPage] = useState(0);
   const [purchaseOrders, setPurchaseOrders] = useState([]);
   const [filterName, setFilterName] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
-
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const { loginUser } = useSelector((state) => state.userSlice);
   const { permissions: userPermissions } = loginUser.decodedToken;
   const canAddPurchaseOrder = hasPermission(
@@ -59,47 +62,76 @@ export default function PurchaseOrder() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchPurchaseOrder();
+  }, []);
+
   const fetchPurchaseOrder = async () => {
     try {
+      console.log("error");
       const response = await ApiCall.get("/purchaseOrder");
       const purchaseOrders = response.data.data.purchaseOrders.filter(
         (order) => order.deleted_at === null
       );
       setPurchaseOrders(purchaseOrders);
     } catch (error) {
-      // Handle any errors here
+      console.log("error", error);
     }
   };
-
-  useEffect(() => {
-    fetchPurchaseOrder();
-  }, [purchaseOrders.id]);
 
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
     if (event.key === "Enter") {
       event.preventDefault();
-      //   handleSearch();
+      handleSearch();
     }
+  };
+  const fetchPage = async () => {
+    try {
+      const response = await ApiCall.get("/purchaseOrder", {
+        params: {
+          page: page + 1,
+        },
+      });
+      setPurchaseOrders(response.data.data.purchaseOrders);
+    } catch (error) {
+      console.log("err", error);
+    }
+  };
+  useEffect(() => {
+    fetchPage();
+  }, [page]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
   };
 
   const handleDelete = async (id) => {
     try {
       const response = await ApiCall.delete(`/purchaseOrder/${id}`);
+      if (response.status === 200) {
+        console.log("Order Deleted!");
 
-      if (response) {
-        console.log("Purchase Order deleted successfully");
-        // Update the purchaseOrders state by filtering out the deleted item
-        setPurchaseOrders((PurchaseOrder) =>
-          PurchaseOrder.filter((order) => order.id !== id)
+        console.log("Updating purchaseOrders state");
+
+        setPurchaseOrders((purchaseOrders) =>
+          purchaseOrders.filter((item) => item.id !== id)
         );
+
+        console.log("SET", purchaseOrders);
       } else {
-        // Handle any errors or validation issues here
+        // Handle the case where the delete request was not successful
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
   };
+
   const handleEdit = (id) => {
     navigate(`/PurchaseOrderForm/${id}`);
   };
@@ -110,9 +142,28 @@ export default function PurchaseOrder() {
   const handleEnterKeyPress = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      //   handleSearch();
+      handleSearch();
     }
   };
+  const emptyRows =
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - purchaseOrders.length)
+      : 0;
+  const isNotFound = !searchResults.length && !!filterName;
+
+  const handleSearch = async () => {
+    try {
+      const response = await ApiCall.get("/purchaseOrder", {
+        params: {
+          vendor_name: filterName,
+        },
+      });
+      setSearchResults(response.data.data.purchaseOrders);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    handleSearch();
+  }, []);
 
   return (
     <div>
@@ -162,6 +213,15 @@ export default function PurchaseOrder() {
                 onChange={handleFilterByName}
                 onKeyDown={handleEnterKeyPress}
               />
+              <TablePagination
+                rowsPerPageOptions={[10, 25]}
+                component="div"
+                count={purchaseOrders.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </div>
             <Table>
               <TableHead>
@@ -173,69 +233,99 @@ export default function PurchaseOrder() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {Array.isArray(purchaseOrders) &&
-                  purchaseOrders.map((order) => (
-                    <TableRow key={order.id}>
-                      {TABLE_HEAD.map((column) => (
-                        <TableCell key={column.id}>
-                          {order[column.id]}
+                {Array.isArray(searchResults) &&
+                  searchResults
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((order) => (
+                      <TableRow key={order.id}>
+                        {TABLE_HEAD.map((column) => (
+                          <TableCell key={column.id}>
+                            {order[column.id]}
+                          </TableCell>
+                        ))}
+                        <TableCell align="right" style={{ display: "flex" }}>
+                          {canEditPurchaseOrder && (
+                            <MenuItem
+                              variant="contained"
+                              onClick={() => handleEdit(order.id)}
+                            >
+                              <Iconify icon={"eva:edit-fill"} />
+                            </MenuItem>
+                          )}
+                          {canDeletePurchaseOrder && (
+                            <MenuItem
+                              sx={{ color: "error.main" }}
+                              onClick={() => setSelectedItem(order)}
+                            >
+                              <Iconify icon={"eva:trash-2-outline"} />
+                            </MenuItem>
+                          )}
+                          {canViewDetails && (
+                            <MenuItem
+                              sx={{ color: "error.main" }}
+                              onClick={() => handleDetails(order.id)}
+                            >
+                              <Iconify icon={"eva:info-outline"} />
+                            </MenuItem>
+                          )}
                         </TableCell>
-                      ))}
-                      <TableCell align="right" style={{ display: "flex" }}>
-                        {canEditPurchaseOrder && (
-                          <MenuItem
-                            variant="contained"
-                            onClick={() => handleEdit(order.id)}
-                          >
-                            <Iconify icon={"eva:edit-fill"} />
-                          </MenuItem>
-                        )}
-                        {canDeletePurchaseOrder && (
-                          <MenuItem
-                            sx={{ color: "error.main" }}
-                            onClick={() => setSelectedItem(order)}
-                          >
-                            <Iconify icon={"eva:trash-2-outline"} />
-                          </MenuItem>
-                        )}
-                        {canViewDetails && (
-                          <MenuItem
-                            sx={{ color: "error.main" }}
-                            onClick={() => handleDetails(order.id)}
-                          >
-                            <Iconify icon={"eva:info-outline"} />
-                          </MenuItem>
-                        )}
-                      </TableCell>
-                      <Dialog
-                        open={selectedItem !== null}
-                        onClose={() => setSelectedItem(null)}
-                      >
-                        <DialogTitle>Delete Purchase Order</DialogTitle>
-                        <DialogContent>
-                          <Typography>
-                            Are you sure you want to delete Purchase Order{" "}
-                            {selectedItem?.company_name}?
-                          </Typography>
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={() => setSelectedItem(null)}>
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              handleDelete(selectedItem.id);
-                              setSelectedItem(null);
-                            }}
-                            sx={{ color: "error.main" }}
-                          >
-                            Delete
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </TableRow>
-                  ))}
+                        <Dialog
+                          open={selectedItem !== null}
+                          onClose={() => setSelectedItem(null)}
+                        >
+                          <DialogTitle>Delete Purchase Order</DialogTitle>
+                          <DialogContent>
+                            <Typography>
+                              Are you sure you want to delete Purchase Order{" "}
+                              {selectedItem?.company_name}?
+                            </Typography>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={() => setSelectedItem(null)}>
+                              Cancel
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                handleDelete(selectedItem.id);
+                                setSelectedItem(null);
+                              }}
+                              sx={{ color: "error.main" }}
+                            >
+                              Delete
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </TableRow>
+                    ))}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 53 * emptyRows }}>
+                    <TableCell colSpan={4} />
+                  </TableRow>
+                )}
               </TableBody>
+              {isNotFound && (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                      <Paper
+                        sx={{
+                          textAlign: "center",
+                        }}
+                      >
+                        <Typography variant="h6" paragraph>
+                          Not found
+                        </Typography>
+
+                        <Typography variant="body2">
+                          No results found for &nbsp;
+                          <strong>&quot;{filterName}&quot;</strong>.
+                          <br /> Try checking for typos or using complete words.
+                        </Typography>
+                      </Paper>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              )}
             </Table>
           </TableContainer>
         </Container>

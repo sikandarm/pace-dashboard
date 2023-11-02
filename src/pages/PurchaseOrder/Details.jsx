@@ -13,9 +13,12 @@ import {
 } from "@material-ui/core";
 
 const TABLE_HEAD = [
+  { id: "company_name", label: "Company Name" },
+  { id: "vendor_name", label: "Vendor Name" },
+  { id: "address", label: "Address" },
   { id: "delivery_date", label: "Delivery Date" },
   { id: "confirm_with", label: "Confirm With" },
-  { id: "vendor_name", label: "Vendor Name" },
+  { id: "phone", label: "Phone" },
   { id: "order_date", label: "Order Date" },
   { id: "placed_via", label: "Placed Via" },
   { id: "po_number", label: "PO Number" },
@@ -82,7 +85,7 @@ const Details = () => {
           style={{ marginTop: "16px" }}
           onClick={handleBackClick}
         >
-          OK
+          Back
         </Button>
       </Paper>
     </Container>
