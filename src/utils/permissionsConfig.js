@@ -38,6 +38,7 @@ const PERMISSIONS = {
   EDIT_PURCHASE: "edit_purchase",
   DELETE_PURCHASE: "delete_purchase",
   VIEW_PURCHASEDETAIS: "view_purchasedetails",
+  ADD_PURCHASEITEM: "add_purchaseitem",
 };
 
 export default PERMISSIONS;

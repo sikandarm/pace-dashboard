@@ -47,7 +47,7 @@ function PurchaseOrderForm() {
   useEffect(() => {
     const fetchPurchaseOrderData = async () => {
       try {
-        const response = await ApiCall.get(`/purchaseOrder/${id}`);
+        const response = await ApiCall.get(`/purchaseorder/${id}`);
         setFormData(response.data.data.purchaseOrder);
       } catch (error) {
         console.error("An error occurred:", error);
@@ -75,20 +75,23 @@ function PurchaseOrderForm() {
       let response;
       if (id) {
         if (Object.keys(values.errors).length === 0) {
-          response = await ApiCall.put(`/purchaseOrder/${id}`, formData);
+          response = await ApiCall.put(`/purchaseorder/${id}`, formData);
           if (response.status === 200 || response.status === 201) {
             console.log("Data", id ? "Updated" : "Created");
-            navigate("/PurchaseOrder");
+            navigate("/purchaseorder");
           } else {
             // Handle error
           }
         }
       } else {
         if (Object.keys(values.errors).length === 0) {
-          response = await ApiCall.post("/purchaseOrder", formData);
+          response = await ApiCall.post("/purchaseorder", formData);
+
           if (response.status === 200 || response.status === 201) {
             console.log("Data", id ? "Updated" : "Created");
-            navigate("/PurchaseOrder");
+            navigate(
+              `/purchaseorderitem/${response.data.data.purchaseOrder.id}`
+            );
           } else {
             // Handle error
           }

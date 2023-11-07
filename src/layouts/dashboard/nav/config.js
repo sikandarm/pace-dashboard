@@ -89,7 +89,17 @@ const navConfig = [
   },
   {
     title: "PurchaseOrder",
-    path: "/purchaseOrder",
+    path: "/purchaseorder",
+    icon: icon("ic_cart"),
+    requiredPermission: [
+      PERMISSIONS.VIEW_CONTACT,
+      PERMISSIONS.ADD_CONTACT,
+      PERMISSIONS.EXPORT_CONTACT,
+    ],
+  },
+  {
+    title: "Company",
+    path: "/companies",
     icon: icon("ic_cart"),
     requiredPermission: [
       PERMISSIONS.VIEW_CONTACT,

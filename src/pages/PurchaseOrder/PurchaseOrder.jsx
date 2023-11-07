@@ -62,22 +62,21 @@ export default function PurchaseOrder() {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchPurchaseOrder();
-  }, []);
-
   const fetchPurchaseOrder = async () => {
     try {
-      console.log("error");
-      const response = await ApiCall.get("/purchaseOrder");
+      const response = await ApiCall.get("/purchaseorder");
       const purchaseOrders = response.data.data.purchaseOrders.filter(
         (order) => order.deleted_at === null
       );
       setPurchaseOrders(purchaseOrders);
     } catch (error) {
-      console.log("error", error);
+      // Handle any errors here
     }
   };
+
+  useEffect(() => {
+    fetchPurchaseOrder();
+  }, [purchaseOrders.id]);
 
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
@@ -88,7 +87,7 @@ export default function PurchaseOrder() {
   };
   const fetchPage = async () => {
     try {
-      const response = await ApiCall.get("/purchaseOrder", {
+      const response = await ApiCall.get("/purchaseorder", {
         params: {
           page: page + 1,
         },
@@ -113,27 +112,21 @@ export default function PurchaseOrder() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await ApiCall.delete(`/purchaseOrder/${id}`);
-      if (response.status === 200) {
-        console.log("Order Deleted!");
+      const response = await ApiCall.delete(`/purchaseorder/${id}`);
 
-        console.log("Updating purchaseOrders state");
-
-        setPurchaseOrders((purchaseOrders) =>
-          purchaseOrders.filter((item) => item.id !== id)
+      if (response) {
+        console.log("Purchase Order deleted successfully");
+        setPurchaseOrders((PurchaseOrder) =>
+          PurchaseOrder.filter((order) => order.id !== id)
         );
-
-        console.log("SET", purchaseOrders);
       } else {
-        // Handle the case where the delete request was not successful
       }
     } catch (error) {
       console.error("An error occurred:", error);
     }
   };
-
   const handleEdit = (id) => {
-    navigate(`/PurchaseOrderForm/${id}`);
+    navigate(`/purchaseorderform/${id}`);
   };
   const handleDetails = (id) => {
     navigate(`/Details/${id}`);
@@ -153,7 +146,7 @@ export default function PurchaseOrder() {
 
   const handleSearch = async () => {
     try {
-      const response = await ApiCall.get("/purchaseOrder", {
+      const response = await ApiCall.get("/purchaseorder", {
         params: {
           vendor_name: filterName,
         },
@@ -188,7 +181,7 @@ export default function PurchaseOrder() {
             </Breadcrumbs>
             {canAddPurchaseOrder && (
               <Button
-                onClick={() => navigate("/PurchaseOrderForm")}
+                onClick={() => navigate("/purchaseorderform")}
                 variant="contained"
                 startIcon={<Iconify icon="eva:plus-fill" />}
               >
