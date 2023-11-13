@@ -128,7 +128,6 @@ const CompanyList = () => {
           );
           setCompanies(updatedCompanies);
           window.location.reload();
-
           console.log(updatedCompanies, "11111");
           console.log("Company edited successfully:", response.data);
           setEditFormData({
@@ -283,7 +282,7 @@ const CompanyList = () => {
               }}
             >
               <TextField
-                label="Search PurchaseOrder.."
+                label="Search Companies.."
                 variant="outlined"
                 margin="normal"
                 value={filterName}

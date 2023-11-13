@@ -107,6 +107,16 @@ const navConfig = [
       PERMISSIONS.EXPORT_CONTACT,
     ],
   },
+  {
+    title: "Vendor",
+    path: "/vendors",
+    icon: icon("ic_cart"),
+    requiredPermission: [
+      PERMISSIONS.VIEW_CONTACT,
+      PERMISSIONS.ADD_CONTACT,
+      PERMISSIONS.EXPORT_CONTACT,
+    ],
+  },
 ];
 
 export default navConfig;

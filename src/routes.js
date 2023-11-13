@@ -21,6 +21,7 @@ import PurchaseOrderForm from "./pages/PurchaseOrder/PurchaseOrderForm.jsx";
 import Details from "./pages/PurchaseOrder/Details";
 import PurchaseOrderItems from "./pages/PurchaseOrder/PurchaseOrderItems";
 import Company from "./pages/Company/company.jsx";
+import Vendor from "./pages/vendor/vendor.js";
 // ----------------------------------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
 import PasswordResetPage from "./pages/PasswordResetPage";
@@ -43,6 +44,7 @@ export default function Router() {
         { path: "roles", element: <Roles /> },
         { path: "jobs", element: <Jobs /> },
         { path: "contacts", element: <Contacts /> },
+        { path: "vendors", element: <Vendor /> },
         { path: "purchaseorder", element: <PurchaseOrder /> },
         { path: "inventory", element: <Inventory /> },
         { path: "purchaseorderform", element: <PurchaseOrderForm /> },

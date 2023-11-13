@@ -42,6 +42,9 @@ const PERMISSIONS = {
   ADD_Company: "add_company",
   Edit_Company: "edit_company",
   Delete_Company: "delete_company",
+  ADD_VENDOR: "add_vendor",
+  Edit_VENDOR: "edit_vendor",
+  Delete_VENDOR: "delete_vendor",
 };
 
 export default PERMISSIONS;

@@ -4,21 +4,26 @@ import {
   TextField,
   Button,
   Container,
+  Select,
   Typography,
+  FormControl,
+  MenuItem,
   Grid,
+  InputLabel,
   Paper,
   Box,
 } from "@mui/material";
 import ApiCall from "../../utils/apicall";
 import { validatePurchaseOrderForm } from "../../utils/PurchaseValidation";
+
 function PurchaseOrderForm() {
   const { id } = useParams();
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
-    company_name: "",
+    company_id: "",
     delivery_date: "",
     confirm_with: "",
-    vendor_name: "",
+    vendor_id: "",
     order_date: "",
     placed_via: "",
     po_number: "",
@@ -31,11 +36,13 @@ function PurchaseOrderForm() {
     term: "",
     fax: "",
   });
+  const [companies, setCompanies] = useState([]);
+  const [vendors, setVendors] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [isFormInitialized, setIsFormInitialized] = useState(false);
-
   const navigate = useNavigate();
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -47,22 +54,33 @@ function PurchaseOrderForm() {
   useEffect(() => {
     const fetchPurchaseOrderData = async () => {
       try {
-        const response = await ApiCall.get(`/purchaseorder/${id}`);
-        setFormData(response.data.data.purchaseOrder);
+        const responseCompanies = await ApiCall.get("/company");
+        const responseVendors = await ApiCall.get("/vendor");
+
+        setCompanies(responseCompanies.data.data.companies);
+        setVendors(responseVendors.data.data.vendors);
+        // Fetch purchase order data
+        if (id) {
+          const responsePurchaseOrder = await ApiCall.get(
+            `/purchaseorder/${id}`
+          );
+          setFormData(responsePurchaseOrder.data.data.purchaseOrder);
+          setIsUpdateMode(true);
+        }
       } catch (error) {
         console.error("An error occurred:", error);
       }
     };
-    if (id) {
-      setIsUpdateMode(true);
+    if (!isFormInitialized) {
+      setIsFormInitialized(true);
       fetchPurchaseOrderData();
     }
-    setIsFormInitialized(true);
-  }, [id]);
+  }, [id, isFormInitialized]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
+
     if (!isFormInitialized) {
       setIsSubmitting(false);
       return;
@@ -73,9 +91,11 @@ function PurchaseOrderForm() {
 
     try {
       let response;
+
       if (id) {
         if (Object.keys(values.errors).length === 0) {
           response = await ApiCall.put(`/purchaseorder/${id}`, formData);
+
           if (response.status === 200 || response.status === 201) {
             console.log("Data", id ? "Updated" : "Created");
             navigate("/purchaseorder");
@@ -112,16 +132,21 @@ function PurchaseOrderForm() {
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  name="company_name"
-                  label="Company Name"
-                  variant="outlined"
-                  fullWidth
-                  value={formData.company_name}
-                  onChange={handleChange}
-                  error={formErrors.company_name !== undefined}
-                  helperText={formErrors.company_name}
-                />
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="company_id">Select Company</InputLabel>
+                  <Select
+                    name="company_id"
+                    value={formData.company_id}
+                    onChange={handleChange}
+                    error={formErrors.company_id !== undefined}
+                  >
+                    {companies.map((company) => (
+                      <MenuItem key={company.id} value={company.id}>
+                        {company.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -149,16 +174,21 @@ function PurchaseOrderForm() {
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  name="vendor_name"
-                  label="Vendor Name"
-                  variant="outlined"
-                  fullWidth
-                  value={formData.vendor_name}
-                  onChange={handleChange}
-                  error={formErrors.vendor_name !== undefined}
-                  helperText={formErrors.vendor_name}
-                />
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="vendor_id">Select Vendor</InputLabel>
+                  <Select
+                    name="vendor_id"
+                    value={formData.vendor_id}
+                    onChange={handleChange}
+                    error={formErrors.vendor_id !== undefined}
+                  >
+                    {vendors.map((vendor) => (
+                      <MenuItem key={vendor.id} value={vendor.id}>
+                        {vendor.vendor_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField

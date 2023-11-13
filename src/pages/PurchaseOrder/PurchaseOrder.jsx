@@ -28,8 +28,8 @@ import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 import { HomeRounded } from "@material-ui/icons";
 import ApiCall from "../../utils/apicall";
 const TABLE_HEAD = [
-  { id: "company_name", label: "Company Name", alignRight: false },
-  { id: "vendor_name", label: "Vendor Name", alignRight: false },
+  // { id: "company", label: "Company Name", alignRight: false },
+  // { id: "vendor_name", label: "Vendor Name", alignRight: false },
   { id: "address", label: "Address", alignRight: false },
   { id: "phone", label: "Phone", alignRight: false },
 ];
@@ -68,6 +68,7 @@ export default function PurchaseOrder() {
       const purchaseOrders = response.data.data.purchaseOrders.filter(
         (order) => order.deleted_at === null
       );
+      console.log(response.purchaseOrders, "asaasasasas");
       setPurchaseOrders(purchaseOrders);
     } catch (error) {
       // Handle any errors here
@@ -219,6 +220,8 @@ export default function PurchaseOrder() {
             <Table>
               <TableHead>
                 <TableRow>
+                  <TableCell>Company Name</TableCell>
+                  <TableCell>Vendor Name</TableCell>
                   {TABLE_HEAD.map((column) => (
                     <TableCell key={column.id}>{column.label}</TableCell>
                   ))}
@@ -231,6 +234,9 @@ export default function PurchaseOrder() {
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((order) => (
                       <TableRow key={order.id}>
+                        <TableCell>{order.company.name}</TableCell>
+                        <TableCell>{order.vendor.vendor_name}</TableCell>
+                        {/* <TableCell>{order.vendors.vendor_name}</TableCell> */}
                         {TABLE_HEAD.map((column) => (
                           <TableCell key={column.id}>
                             {order[column.id]}
