@@ -78,6 +78,7 @@ function PurchaseOrderForm() {
   }, [id, isFormInitialized]);
 
   const handleSubmit = async (event) => {
+    console.log("++++++");
     event.preventDefault();
     setIsSubmitting(true);
 
@@ -86,7 +87,9 @@ function PurchaseOrderForm() {
       return;
     }
 
+    console.log(formData, "*********");
     const values = validatePurchaseOrderForm(formData);
+    console.log(values, "+_+_+_+");
     setFormErrors(values.errors);
 
     try {
@@ -105,6 +108,7 @@ function PurchaseOrderForm() {
         }
       } else {
         if (Object.keys(values.errors).length === 0) {
+          console.log("_______");
           response = await ApiCall.post("/purchaseorder", formData);
 
           if (response.status === 200 || response.status === 201) {

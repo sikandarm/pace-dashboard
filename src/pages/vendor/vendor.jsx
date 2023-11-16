@@ -50,6 +50,7 @@ const Vendor = () => {
     try {
       const response = await ApiCall.get("/vendor");
       setVendors(response.data.data.vendors);
+      setSearchResults(response.data.data.vendors);
     } catch (error) {
       console.error("Error fetching vendors:", error);
     }
@@ -80,13 +81,15 @@ const Vendor = () => {
 
     try {
       const response = await ApiCall.post("/vendor", newVendorData);
-      console.log("Vendor added successfully:", response.data.data.vendors);
-      setNewVendorData({ vendor_name: "" });
-      setFormErrors({
-        vendor_name: "",
-      });
-      handleClose();
-      fetchVendors();
+      // console.log("Vendor added successfully:", response.data.data.vendors);
+      if (response) {
+        fetchVendors();
+        setNewVendorData({ vendor_name: "" });
+        setFormErrors({
+          vendor_name: "",
+        });
+        handleClose();
+      }
     } catch (error) {
       console.error("Error adding vendor:", error);
     }
@@ -138,6 +141,7 @@ const Vendor = () => {
         newVendorData
       );
       if (response.status === 200) {
+        fetchVendors();
         var updatedVendor = response.data.data.vendor;
         var updatedVendors = vendors.map((vendor) =>
           vendor.id === updatedVendor.id ? updatedVendor : vendor
@@ -148,7 +152,6 @@ const Vendor = () => {
         });
         console.log("Vendor updated successfully:", response.data);
         setOpenUpdateModel(false);
-        fetchVendors();
       } else {
       }
     } catch (error) {

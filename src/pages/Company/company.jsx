@@ -83,6 +83,7 @@ const CompanyList = () => {
     try {
       const response = await ApiCall.get("/company");
       setCompanies(response.data.data.companies);
+      setSearchResults(response.data.data.companies)
       setLoading(false);
     } catch (error) {
       console.error("Error fetching companies:", error);
@@ -122,14 +123,15 @@ const CompanyList = () => {
         // console.log("resonse", response.data.data.company);
 
         if (response.status === 200) {
+    fetchCompanies();
           var updatedCompany = response.data.data.company;
           var updatedCompanies = companies.map((company) =>
             company.id === updatedCompany.id ? updatedCompany : company
           );
-          setCompanies(updatedCompanies);
-          window.location.reload();
-          console.log(updatedCompanies, "11111");
-          console.log("Company edited successfully:", response.data);
+        //   setCompanies(updatedCompanies);
+         // window.location.reload();
+          //console.log(updatedCompanies, "11111");
+          //console.log("Company edited successfully:", response.data);
           setEditFormData({
             name: "",
             email: "",
@@ -151,6 +153,7 @@ const CompanyList = () => {
     try {
       const response = await ApiCall.delete(`/company/${id}`);
       if (response) {
+            fetchCompanies();
         setCompanies((company) => company.filter((order) => order.id !== id));
       } else {
       }
@@ -192,8 +195,10 @@ const CompanyList = () => {
     if (Object.keys(values).length === 0) {
       try {
         const response = await ApiCall.post("/company", formData);
-        console.log("Company added successfully:", response.data);
-
+        // console.log("Company added successfully:", response.data);
+          if(response)
+          {
+        fetchCompanies();
         setFormData({
           name: "",
           email: "",
@@ -203,6 +208,8 @@ const CompanyList = () => {
         });
         setFormErrors("");
         handleClose();
+          }
+        
       } catch (error) {
         console.error("Error adding company:", error);
       }

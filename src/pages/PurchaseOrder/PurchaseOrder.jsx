@@ -68,16 +68,19 @@ export default function PurchaseOrder() {
       const purchaseOrders = response.data.data.purchaseOrders.filter(
         (order) => order.deleted_at === null
       );
-      console.log(response.purchaseOrders, "asaasasasas");
-      setPurchaseOrders(purchaseOrders);
+      if (response) {
+        setSearchResults(response.data.data.purchaseOrders);
+        setPurchaseOrders(purchaseOrders);
+      }
     } catch (error) {
       // Handle any errors here
+      console.log(error, "err");
     }
   };
 
   useEffect(() => {
     fetchPurchaseOrder();
-  }, [purchaseOrders.id]);
+  }, []);
 
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
@@ -116,6 +119,7 @@ export default function PurchaseOrder() {
       const response = await ApiCall.delete(`/purchaseorder/${id}`);
 
       if (response) {
+        fetchPurchaseOrder();
         console.log("Purchase Order deleted successfully");
         setPurchaseOrders((PurchaseOrder) =>
           PurchaseOrder.filter((order) => order.id !== id)

@@ -62,17 +62,19 @@ export default function Contacts() {
     userPermissions,
     PERMISSIONS.DELETE_CONTACT
   );
-  const contacts = useSelector((state) => state.ContactSlice.contacts);
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const response = await ApiCall.get("/contact");
-        dispatch(getContacts(response.data.data));
-      } catch (error) {
-        // Handle error
-      }
-    };
 
+  const contacts = useSelector((state) => state.ContactSlice.contacts);
+
+  const fetchContacts = async () => {
+    try {
+      const response = await ApiCall.get("/contact");
+      dispatch(getContacts(response.data.data.contacts));
+      setSearchResults(response.data.data.contacts);
+    } catch (error) {
+      // Handle error
+    }
+  };
+  useEffect(() => {
     fetchContacts();
   }, [dispatch]);
 
@@ -115,8 +117,11 @@ export default function Contacts() {
     setRowsPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleDelete = (id) => {
-    dispatch(deleteContact(id));
+  const handleDelete = async (id) => {
+    var data = dispatch(deleteContact(id));
+    if (data) {
+      fetchContacts();
+    }
   };
 
   const handleFilterByName = (event) => {
@@ -167,9 +172,10 @@ export default function Contacts() {
           const newContact = response.data;
           setFormErrors("");
           handleClose();
-          window.location.reload();
-          dispatch(getContacts([...contacts, newContact]));
-          setNewContact({ ...initialNewContact });
+          // window.location.reload();
+          fetchContacts();
+          //   dispatch(getContacts(response.data));
+          //setNewContact({ ...initialNewContact });
         } else {
         }
       } catch (error) {}
@@ -193,8 +199,7 @@ export default function Contacts() {
             contact.id === updatedContact.id ? updatedContact : contact
           );
           handleClose();
-          window.location.reload();
-          dispatch(getContacts(updatedContacts));
+          fetchContacts();
           setOpenUpdateModel(false);
         } else {
         }

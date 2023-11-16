@@ -21,7 +21,7 @@ import PurchaseOrderForm from "./pages/PurchaseOrder/PurchaseOrderForm.jsx";
 import Details from "./pages/PurchaseOrder/Details";
 import PurchaseOrderItems from "./pages/PurchaseOrder/PurchaseOrderItems";
 import Company from "./pages/Company/company.jsx";
-import Vendor from "./pages/vendor/vendor.js";
+import Vendor from "./pages/vendor/vendor.jsx";
 // ----------------------------------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
 import PasswordResetPage from "./pages/PasswordResetPage";

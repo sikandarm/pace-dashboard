@@ -6,7 +6,6 @@ export const getContacts = createAsyncThunk(
   async (ThunkApi) => {
     try {
       const res = await ApiCall.get("/contact");
-      console.log("checking");
       return res.data.data.contacts;
     } catch (error) {
       return ThunkApi.rejectWithValue(error.response.data.message);
@@ -49,8 +48,8 @@ export const deleteContact = createAsyncThunk(
     try {
       const res = await ApiCall.delete(`/contact/${data}`);
       if (res.data.success) {
-        window.location.reload();
-        return data;
+       
+        return data.data;
       }
     } catch (error) {
       return ThunkApi.rejectWithValue("Error deleting in");

@@ -76,7 +76,7 @@ const CreatePurchaseOrderItem = () => {
 
     if (duplicateInventoryIds.length > 0) {
       toast.error(
-        "Duplicate inventory items: " + duplicateInventoryIds.join(", "),
+        "Duplicate inventory items",
         { position: "top-right" }
       );
       return;
@@ -91,7 +91,7 @@ const CreatePurchaseOrderItem = () => {
           });
           if (response.status === 201) {
             console.log("Data saved successfully");
-            navigate("/PurchaseOrderForm");
+            navigate("/purchaseorder");
           } else {
             console.error("Error saving data");
           }

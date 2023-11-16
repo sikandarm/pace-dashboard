@@ -16,8 +16,8 @@ import {
 } from "@mui/material";
 import { HomeRounded } from "@material-ui/icons";
 const TABLE_HEAD = [
-  { id: "company_name", label: "Company Name" },
-  { id: "vendor_name", label: "Vendor Name" },
+  // { id: "company_name", label: "Company Name" },
+  // { id: "vendor_name", label: "Vendor Name" },
   { id: "address", label: "Address" },
   { id: "delivery_date", label: "Delivery Date" },
   { id: "confirm_with", label: "Confirm With" },
@@ -84,6 +84,28 @@ const Details = () => {
         <Paper>
           {formData && (
             <Card>
+              <ListItem style={{ borderBottom: "1px solid #e0e0e0" }}>
+                <Grid container style={{ marginBottom: "16px" }}>
+                  <Grid item xs={6}>
+                    <ListItemText />
+                    Company Name
+                  </Grid>
+                  <Grid item xs={6}>
+                    {formData.company.name}
+                  </Grid>
+                </Grid>
+              </ListItem>
+              <ListItem style={{ borderBottom: "1px solid #e0e0e0" }}>
+                <Grid container style={{ marginBottom: "16px" }}>
+                  <Grid item xs={6}>
+                    <ListItemText />
+                    Vendor Name
+                  </Grid>
+                  <Grid item xs={6}>
+                    {formData.vendor.vendor_name}
+                  </Grid>
+                </Grid>
+              </ListItem>
               {TABLE_HEAD.map((column) => (
                 <ListItem
                   key={column.id}
@@ -102,7 +124,7 @@ const Details = () => {
               <Button
                 variant="contained"
                 color="primary"
-                style={{ marginTop: "1px" }}
+                style={{ marginTop: "10px" }}
                 onClick={handleBackClick}
               >
                 Back
