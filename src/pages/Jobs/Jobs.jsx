@@ -1,10 +1,10 @@
-import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
-import Papa from 'papaparse';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import CModel from '../../components/CModel/CModel';
+import { Helmet } from "react-helmet-async";
+import { filter } from "lodash";
+import { sentenceCase } from "change-case";
+import Papa from "papaparse";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import CModel from "../../components/CModel/CModel";
 // @mui
 import {
   Card,
@@ -21,33 +21,34 @@ import {
   TableContainer,
   TablePagination,
   Breadcrumbs,
-} from '@mui/material';
+  
+} from "@mui/material";
 
-import { HomeRounded } from '@material-ui/icons';
+import { HomeRounded } from "@material-ui/icons";
 // components
-import Label from '../../components/label';
-import Iconify from '../../components/iconify';
-import Scrollbar from '../../components/scrollbar';
+import Label from "../../components/label";
+import Iconify from "../../components/iconify";
+import Scrollbar from "../../components/scrollbar";
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { UserListHead, UserListToolbar } from "../../sections/@dashboard/user";
 // mock
-import { useSelector } from 'react-redux';
-import { deleteJob, getJobs } from '../../feature/jobSlice';
-import { fDate } from '../../utils/formatTime';
-import ApiCall from '../../utils/apicall';
+import { useSelector } from "react-redux";
+import { deleteJob, getJobs } from "../../feature/jobSlice";
+import { fDate } from "../../utils/formatTime";
+import ApiCall from "../../utils/apicall";
 // import { readCSVFile } from '../../utils/readCSVFile';
 // import { validateJobData } from '../../utils/validateJobData';
 // import { jobCSVTamplate } from '../../utils/jobCSVTemplate';
-import { hasPermission, PERMISSIONS } from '../../utils/hasPermission';
+import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'status', label: 'status', alignRight: false },
-  { id: 'totalTasks', label: 'Total Tasks', alignRight: false },
-  { id: 'completedTasks', label: 'Completed Tasks', alignRight: false },
-  { id: 'startDate', label: 'Start Date', alignRight: false },
-  { id: 'endDate', label: 'End Date', alignRight: false },
-  { id: '', label: '' },
+  { id: "name", label: "Name", alignRight: false },
+  { id: "status", label: "status", alignRight: false },
+  { id: "totalTasks", label: "Total Tasks", alignRight: false },
+  { id: "completedTasks", label: "Completed Tasks", alignRight: false },
+  { id: "startDate", label: "Start Date", alignRight: false },
+  { id: "endDate", label: "End Date", alignRight: false },
+  { id: "", label: "" },
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -61,7 +62,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -70,18 +71,17 @@ export default function Jobs(props) {
   const dispatch = useDispatch();
   let open = false;
   const [page, setPage] = useState(0);
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState("asc");
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
-  const [filterName, setFilterName] = useState('');
+  const [orderBy, setOrderBy] = useState("name");
+  const [filterName, setFilterName] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedRow, setSelectedRow] = useState('');
+  const [selectedRow, setSelectedRow] = useState("");
   const [openModel, setOpenModel] = useState(false);
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const { jobs, isJobLoading } = useSelector((state) => state.jobSlice);
   const [allJobs, setAllJobs] = useState([]);
   const { loginUser } = useSelector((state) => state.userSlice);
-
   const { permissions: userPermissions } = loginUser.decodedToken;
   const canAddJob = hasPermission(userPermissions, PERMISSIONS.ADD_JOB);
   const canEditJob = hasPermission(userPermissions, PERMISSIONS.EDIT_JOB);
@@ -95,20 +95,20 @@ export default function Jobs(props) {
 
   const fetchTasks = async () => {
     try {
-      const response = await ApiCall.get('/job/export');
-      setAllJobs(response.data.data); // Assuming the response is an array of tasks
+      const response = await ApiCall.get("/job/export");
+      setAllJobs(response.data.data);
     } catch (error) {
-      console.error('Error fetching tasks:', error);
+      console.error("Error fetching tasks:", error);
     }
   };
 
   const handleExport = () => {
     const csvData = Papa.unparse(allJobs, { header: true });
-    const blob = new Blob([csvData], { type: 'text/csv' });
+    const blob = new Blob([csvData], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'jobs.csv';
+    a.download = "jobs.csv";
     a.click();
 
     URL.revokeObjectURL(url);
@@ -170,8 +170,8 @@ export default function Jobs(props) {
   // };
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
@@ -192,7 +192,10 @@ export default function Jobs(props) {
       return a[1] - b[1];
     });
     if (query) {
-      return filter(jobs, (_inv) => _inv.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+      return filter(
+        jobs,
+        (_inv) => _inv.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      );
     }
     return stabilizedThis.map((el) => el[0]);
   }
@@ -209,12 +212,16 @@ export default function Jobs(props) {
   const handleFilterByName = (event) => {
     setPage(0);
     setFilterName(event.target.value);
-    // console.log(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - jobs.length) : 0;
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - jobs.length) : 0;
 
-  const filteredUsers = applySortFilter(jobs, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(
+    jobs,
+    getComparator(order, orderBy),
+    filterName
+  );
 
   const isNotFound = !filteredUsers.length && !!filterName;
   const handleDelete = (id) => {
@@ -232,21 +239,35 @@ export default function Jobs(props) {
       <Helmet>
         <title> Jobs | Pace Jobs </title>
       </Helmet>
-      {openModel ? <CModel isLoading={isJobLoading} open={openModel} setOpen={setOpenModel} filter={'add-job'} /> : ''}
+      {openModel ? (
+        <CModel
+          isLoading={isJobLoading}
+          open={openModel}
+          setOpen={setOpenModel}
+          filter={"add-job"}
+        />
+      ) : (
+        ""
+      )}
       {openUpdateModel ? (
         <CModel
           open={openUpdateModel}
           isLoading={isJobLoading}
           data={selectedRow}
           setOpen={setOpenUpdateModel}
-          filter={'edit-job'}
+          filter={"edit-job"}
         />
       ) : (
-        ''
+        ""
       )}
       {canViewJobList && (
         <Container>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={5}
+          >
             <Breadcrumbs aria-label="breadcrumb">
               <Stack direction="row" alignItems="center" spacing={1}>
                 <HomeRounded color="inherit" />
@@ -255,20 +276,22 @@ export default function Jobs(props) {
                 </Typography>
               </Stack>
             </Breadcrumbs>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              {/* <Button onClick={downloadCSVTemplate} variant="outlined" startIcon={<Iconify icon="ph:download-fill" />}>
-              Download CSV Template
-            </Button>
-            <Button onClick={handleImport} variant="outlined" startIcon={<Iconify icon="ph:upload-fill" />}>
-              Import Jobs
-            </Button> */}
+            <div style={{ display: "flex", gap: "10px" }}>
               {canExportJob && (
-                <Button onClick={handleExport} variant="outlined" startIcon={<Iconify icon="ph:download-fill" />}>
+                <Button
+                  onClick={handleExport}
+                  variant="outlined"
+                  startIcon={<Iconify icon="ph:download-fill" />}
+                >
                   Export Jobs
                 </Button>
               )}
               {canAddJob && (
-                <Button onClick={handleOpenModel} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+                <Button
+                  onClick={handleOpenModel}
+                  variant="contained"
+                  startIcon={<Iconify icon="eva:plus-fill" />}
+                >
                   New Job
                 </Button>
               )}
@@ -278,14 +301,14 @@ export default function Jobs(props) {
           <Card>
             <div
               style={{
-                display: 'flex',
-                width: '100%',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                display: "flex",
+                width: "100%",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
               <UserListToolbar
-                label={'Search Job..'}
+                label={"Search Job.."}
                 numSelected={selected.length}
                 filterName={filterName}
                 onFilterName={handleFilterByName}
@@ -306,7 +329,6 @@ export default function Jobs(props) {
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
                   <UserListHead
-                    // order={order}
                     orderBy={orderBy}
                     headLabel={TABLE_HEAD}
                     rowCount={jobs.length}
@@ -315,52 +337,91 @@ export default function Jobs(props) {
                     onSelectAllClick={handleSelectAllClick}
                   />
                   <TableBody>
-                    {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                      const { id, name, status, totalTasks, completedTasks, startDate, endDate } = row;
-                      return (
-                        <TableRow hover key={id} tabIndex={-1}>
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center">
-                              <Typography sx={{ padding: '0px 15px' }} variant="subtitle2" noWrap>
-                                {name}
-                              </Typography>
-                            </Stack>
-                          </TableCell>
-
-                          <TableCell align="left">
-                            <Label
-                              color={
-                                status === 'completed' ? 'success' : status === 'in_process' ? 'secondary' : 'error'
-                              }
+                    {filteredUsers
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((row) => {
+                        const {
+                          id,
+                          name,
+                          status,
+                          totalTasks,
+                          completedTasks,
+                          startDate,
+                          endDate,
+                        } = row;
+                        return (
+                          <TableRow hover key={id} tabIndex={-1}>
+                            <TableCell
+                              component="th"
+                              scope="row"
+                              padding="none"
                             >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
-                          <TableCell align="left">{totalTasks ? totalTasks : 0}</TableCell>
-                          <TableCell align="left">{completedTasks ? completedTasks : 0}</TableCell>
-                          <TableCell align="left">{startDate ? fDate(startDate) : '_'}</TableCell>
-                          <TableCell align="left">{endDate ? fDate(endDate) : '_'}</TableCell>
-                          <TableCell align="right" style={{ display: 'flex' }}>
-                            {canEditJob && (
-                              <MenuItem
-                                onClick={() => {
-                                  setSelectedRow(row);
-                                  setOpenUpdateModel(!openUpdateModel);
-                                }}
-                              >
-                                <Iconify icon={'eva:edit-fill'} />
-                              </MenuItem>
-                            )}
+                              <Stack direction="row" alignItems="center">
+                                <Typography
+                                  sx={{ padding: "0px 15px" }}
+                                  variant="subtitle2"
+                                  noWrap
+                                >
+                                  {name}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
 
-                            {canDeleteJob && (
-                              <MenuItem sx={{ color: 'error.main' }} onClick={() => handleDelete(id)}>
-                                <Iconify icon={'eva:trash-2-outline'} />
-                              </MenuItem>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                            <TableCell align="left">
+                              <Label
+                                color={
+                                  status === "completed"
+                                    ? "success"
+                                    : status === "in_process"
+                                    ? "secondary"
+                                    : "error"
+                                }
+                              >
+                                {sentenceCase(status)}
+                              </Label>
+                            </TableCell>
+                            <TableCell align="left">
+                              {totalTasks ? totalTasks : 0}
+                            </TableCell>
+                            <TableCell align="left">
+                              {completedTasks ? completedTasks : 0}
+                            </TableCell>
+                            <TableCell align="left">
+                              {startDate ? fDate(startDate) : "_"}
+                            </TableCell>
+                            <TableCell align="left">
+                              {endDate ? fDate(endDate) : "_"}
+                            </TableCell>
+                            <TableCell
+                              align="right"
+                              style={{ display: "flex" }}
+                            >
+                              {canEditJob && (
+                                <MenuItem
+                                  onClick={() => {
+                                    setSelectedRow(row);
+                                    setOpenUpdateModel(!openUpdateModel);
+                                  }}
+                                >
+                                  <Iconify icon={"eva:edit-fill"} />
+                                </MenuItem>
+                              )}
+
+                              {canDeleteJob && (
+                                <MenuItem
+                                  sx={{ color: "error.main" }}
+                                  onClick={() => handleDelete(id)}
+                                >
+                                  <Iconify icon={"eva:trash-2-outline"} />
+                                </MenuItem>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 53 * emptyRows }}>
                         <TableCell colSpan={6} />
@@ -374,7 +435,7 @@ export default function Jobs(props) {
                         <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
                           <Paper
                             sx={{
-                              textAlign: 'center',
+                              textAlign: "center",
                             }}
                           >
                             <Typography variant="h6" paragraph>
@@ -384,7 +445,8 @@ export default function Jobs(props) {
                             <Typography variant="body2">
                               No results found for &nbsp;
                               <strong>&quot;{filterName}&quot;</strong>.
-                              <br /> Try checking for typos or using complete words.
+                              <br /> Try checking for typos or using complete
+                              words.
                             </Typography>
                           </Paper>
                         </TableCell>
