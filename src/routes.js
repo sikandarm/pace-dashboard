@@ -38,7 +38,7 @@ export default function Router() {
         <Navigate to="/login" replace />
       ),
       children: [
-        { element: <Navigate to="/users" />, index: true },
+        // { element: <Navigate to="/users" />, index: true },
         { path: "/dashboard/app", element: <DashboardAppPage /> },
         { path: "users", element: <Users dispatch={dispatch} /> },
         { path: "roles", element: <Roles /> },

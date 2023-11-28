@@ -318,6 +318,7 @@ const Vendor = () => {
                   {TABLE_HEAD.map((column) => (
                     <TableCell key={column.id}>{column.label}</TableCell>
                   ))}
+                  <TableCell></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

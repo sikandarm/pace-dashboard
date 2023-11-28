@@ -106,6 +106,17 @@ const Details = () => {
                   </Grid>
                 </Grid>
               </ListItem>
+              <ListItem style={{ borderBottom: "1px solid #e0e0e0" }}>
+                <Grid container style={{ marginBottom: "16px" }}>
+                  <Grid item xs={6}>
+                    <ListItemText />
+                    Assign To
+                  </Grid>
+                  <Grid item xs={6}>
+                    {formData.firstName.firstName}
+                  </Grid>
+                </Grid>
+              </ListItem>
               {TABLE_HEAD.map((column) => (
                 <ListItem
                   key={column.id}

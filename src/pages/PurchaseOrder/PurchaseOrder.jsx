@@ -32,6 +32,7 @@ const TABLE_HEAD = [
   // { id: "vendor_name", label: "Vendor Name", alignRight: false },
   { id: "address", label: "Address", alignRight: false },
   { id: "phone", label: "Phone", alignRight: false },
+  { id: "status", label: "Status", alignRight: false },
 ];
 
 export default function PurchaseOrder() {
@@ -226,6 +227,7 @@ export default function PurchaseOrder() {
                 <TableRow>
                   <TableCell>Company Name</TableCell>
                   <TableCell>Vendor Name</TableCell>
+                  <TableCell>Assign To</TableCell>
                   {TABLE_HEAD.map((column) => (
                     <TableCell key={column.id}>{column.label}</TableCell>
                   ))}
@@ -240,6 +242,7 @@ export default function PurchaseOrder() {
                       <TableRow key={order.id}>
                         <TableCell>{order.company.name}</TableCell>
                         <TableCell>{order.vendor.vendor_name}</TableCell>
+                        <TableCell>{order.firstName.firstName}</TableCell>
                         {/* <TableCell>{order.vendors.vendor_name}</TableCell> */}
                         {TABLE_HEAD.map((column) => (
                           <TableCell key={column.id}>

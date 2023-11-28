@@ -23,6 +23,7 @@ export const validatePurchaseOrderForm = (formData) => {
   validateField(formData.company_id, null, "company_name");
   validateField(formData.delivery_date, null, "delivery_date");
   validateField(formData.vendor_id, null, "vendor_name");
+  validateField(formData.userId, null, "userId");
   validateField(formData.order_date, null, "order_date");
   validateField(formData.po_number, numberRegex, "po_number");
   validateField(formData.phone, phoneRegex, "phone");

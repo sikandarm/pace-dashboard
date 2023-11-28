@@ -24,6 +24,7 @@ function PurchaseOrderForm() {
     delivery_date: "",
     confirm_with: "",
     vendor_id: "",
+    userId: "",
     order_date: "",
     placed_via: "",
     po_number: "",
@@ -35,9 +36,11 @@ function PurchaseOrderForm() {
     email: "",
     term: "",
     fax: "",
+    status: "",
   });
   const [companies, setCompanies] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [user, setUser] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [isFormInitialized, setIsFormInitialized] = useState(false);
@@ -56,9 +59,10 @@ function PurchaseOrderForm() {
       try {
         const responseCompanies = await ApiCall.get("/company");
         const responseVendors = await ApiCall.get("/vendor");
-
+        const responseUser = await ApiCall.get("/user");
         setCompanies(responseCompanies.data.data.companies);
         setVendors(responseVendors.data.data.vendors);
+        setUser(responseUser.data.data.users);
         // Fetch purchase order data
         if (id) {
           const responsePurchaseOrder = await ApiCall.get(
@@ -87,9 +91,9 @@ function PurchaseOrderForm() {
       return;
     }
 
-    console.log(formData, "*********");
+    // console.log(formData, "*********");
     const values = validatePurchaseOrderForm(formData);
-    console.log(values, "+_+_+_+");
+    // console.log(values, "+_+_+_+");
     setFormErrors(values.errors);
 
     try {
@@ -303,7 +307,7 @@ function PurchaseOrderForm() {
                   helperText={formErrors.email}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={4}>
                 <TextField
                   name="term"
                   label="Term"
@@ -315,7 +319,7 @@ function PurchaseOrderForm() {
                   helperText={formErrors.term}
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={4}>
                 <TextField
                   name="fax"
                   label="Fax"
@@ -325,6 +329,35 @@ function PurchaseOrderForm() {
                   onChange={handleChange}
                   error={formErrors.fax !== undefined}
                   helperText={formErrors.fax}
+                />
+              </Grid>
+              <Grid item xs={2} sm={4}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="userId">Assign To</InputLabel>
+                  <Select
+                    name="userId"
+                    value={formData.userId}
+                    onChange={handleChange}
+                    error={formErrors.userId !== undefined}
+                  >
+                    {user.map((user) => (
+                      <MenuItem key={user.id} value={user.id}>
+                        {user.firstName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  name="status"
+                  label="Status"
+                  variant="outlined"
+                  fullWidth
+                  value={formData.status}
+                  onChange={handleChange}
+                  //  error={formErrors.fax !== undefined}
+                  // helperText={formErrors.fax}
                 />
               </Grid>
               <Grid item xs={12}>

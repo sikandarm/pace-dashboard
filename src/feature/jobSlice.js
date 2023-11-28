@@ -14,7 +14,6 @@ export const getJobs = createAsyncThunk('getJobs/jobs', async (ThunkApi) => {
 export const createJob = createAsyncThunk('createJob/jobs', async (data, ThunkApi) => {
   try {
     const res = await ApiCall.post('/job', data);
-    console.log(res);
     return res.data;
   } catch (error) {
     const { message } = error.response.data;
