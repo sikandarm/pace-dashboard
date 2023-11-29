@@ -13,6 +13,12 @@ import {
   Grid,
   Breadcrumbs,
   Container,
+  TableContainer,
+  TableCell,
+  Table,
+  TableRow,
+  TableBody,
+  TableHead,
 } from "@mui/material";
 import { HomeRounded } from "@material-ui/icons";
 const TABLE_HEAD = [
@@ -32,10 +38,14 @@ const TABLE_HEAD = [
   { id: "term", label: "Term" },
   { id: "fax", label: "Fax" },
 ];
-
+// const items = [
+//   { id: "inventory_id", label: "Items" },
+//   { id: "quantity", label: "Quantity" }
+// ];
 const Details = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState(null);
+  const [items, setItems] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +53,7 @@ const Details = () => {
       try {
         const response = await ApiCall.get(`/purchaseOrder/${id}`);
         setFormData(response.data.data.purchaseOrder);
+        setItems(response.data.data.PurchaseOrderItems);
       } catch (error) {
         console.error("An error occurred:", error);
       }
@@ -132,16 +143,38 @@ const Details = () => {
                   </Grid>
                 </ListItem>
               ))}
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ marginTop: "10px" }}
-                onClick={handleBackClick}
-              >
-                Back
-              </Button>
             </Card>
           )}
+        </Paper>
+        <Paper style={{marginTop : '8px'}}>
+          <Card>
+            <TableContainer>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Items</TableCell>
+                    <TableCell>Quantity</TableCell>
+                  </TableRow>
+                </TableBody>
+                {items.map((item) => (
+                  <TableBody key={item.id}>
+                    <TableRow>
+                      <TableCell>{item.Inventory.ediStdNomenclature}</TableCell>
+                      <TableCell>{item.quantity}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                ))}
+              </Table>
+            </TableContainer>
+          </Card>
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginTop: "10px" }}
+            onClick={handleBackClick}
+          >
+            Back
+          </Button>
         </Paper>
       </Container>
     </div>

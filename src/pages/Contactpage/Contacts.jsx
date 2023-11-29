@@ -175,7 +175,7 @@ export default function Contacts() {
           // window.location.reload();
           fetchContacts();
           //   dispatch(getContacts(response.data));
-          //setNewContact({ ...initialNewContact });
+          setNewContact({ ...initialNewContact });
         } else {
         }
       } catch (error) {}
@@ -213,6 +213,7 @@ export default function Contacts() {
 
   const handleClose = () => {
     setFormErrors("");
+    setNewContact({ ...initialNewContact });
     setOpenUpdateModel(false);
     setOpen(false);
   };

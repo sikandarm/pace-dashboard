@@ -38,6 +38,7 @@ function PurchaseOrderForm() {
     fax: "",
     status: "",
   });
+  
   const [companies, setCompanies] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [user, setUser] = useState([]);
@@ -147,6 +148,7 @@ function PurchaseOrderForm() {
                     value={formData.company_id}
                     onChange={handleChange}
                     error={formErrors.company_id !== undefined}
+                    required
                   >
                     {companies.map((company) => (
                       <MenuItem key={company.id} value={company.id}>
@@ -189,6 +191,7 @@ function PurchaseOrderForm() {
                     value={formData.vendor_id}
                     onChange={handleChange}
                     error={formErrors.vendor_id !== undefined}
+                    required
                   >
                     {vendors.map((vendor) => (
                       <MenuItem key={vendor.id} value={vendor.id}>

@@ -185,6 +185,13 @@ const CompanyList = () => {
 
   const handleClose = () => {
     setFormErrors("");
+    setFormData({
+      name: "",
+      email: "",
+      address: "",
+      phone: "",
+      fax: "",
+    });
     setOpenUpdateModel(false);
     setOpen(false);
   };
@@ -324,6 +331,7 @@ const CompanyList = () => {
                       }
                       error={formErrors.name !== undefined}
                       helperText={formErrors.name}
+                      style={{ marginTop: "5px" }}
                     />
                     <TextField
                       label="Email"
@@ -338,6 +346,7 @@ const CompanyList = () => {
                       }
                       error={formErrors.email !== undefined}
                       helperText={formErrors.email}
+                      style={{ marginTop: "7px" }}
                     />
                     <TextField
                       label="Address"
@@ -352,6 +361,7 @@ const CompanyList = () => {
                       }
                       error={formErrors.address !== undefined}
                       helperText={formErrors.address}
+                      style={{ marginTop: "7px" }}
                     />
                     <TextField
                       label="Phone"
@@ -366,6 +376,7 @@ const CompanyList = () => {
                       }
                       error={formErrors.phone !== undefined}
                       helperText={formErrors.phone}
+                      style={{ marginTop: "7px" }}
                     />
                     <TextField
                       label="Fax"
@@ -380,6 +391,7 @@ const CompanyList = () => {
                       }
                       error={formErrors.fax !== undefined}
                       helperText={formErrors.fax}
+                      style={{ marginTop: "7px" }}
                     />
                   </form>
                 </DialogContent>
@@ -440,6 +452,7 @@ const CompanyList = () => {
                                     }
                                     error={formErrors.name !== undefined}
                                     helperText={formErrors.name}
+                                    style={{ marginTop: "5px" }}
                                   />
 
                                   <TextField
@@ -455,6 +468,7 @@ const CompanyList = () => {
                                     }
                                     error={formErrors.email !== undefined}
                                     helperText={formErrors.email}
+                                    style={{ marginTop: "7px" }}
                                   />
 
                                   <TextField
@@ -470,6 +484,7 @@ const CompanyList = () => {
                                     }
                                     error={formErrors.phone !== undefined}
                                     helperText={formErrors.phone}
+                                    style={{ marginTop: "7px" }}
                                   />
 
                                   <TextField
@@ -485,6 +500,7 @@ const CompanyList = () => {
                                     }
                                     error={formErrors.address !== undefined}
                                     helperText={formErrors.address}
+                                    style={{ marginTop: "7px" }}
                                   />
 
                                   <TextField
@@ -500,6 +516,7 @@ const CompanyList = () => {
                                     }
                                     error={formErrors.fax !== undefined}
                                     helperText={formErrors.fax}
+                                    style={{ marginTop: "7px" }}
                                   />
                                 </form>
                               </DialogContent>
