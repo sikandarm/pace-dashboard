@@ -45,6 +45,13 @@ const PERMISSIONS = {
   ADD_VENDOR: "add_vendor",
   Edit_VENDOR: "edit_vendor",
   Delete_VENDOR: "delete_vendor",
+  Detail_Job: "detail_job",
+  Add_FabricatedItems: "add_fabricateditems",
+  Update_FabricatedItems: "update_fabricateditems",
+  ADD_SEQUENCE: "add_sequence",
+  DELETE_SEQUENCE: "delete_sequence",
+  VIEW_SEQUENCE: "view_sequence",
+  EDIT_SEQUENCE: "edit_sequence",
 };
 
 export default PERMISSIONS;

@@ -12,6 +12,7 @@ import DashboardAppPage from "./pages/DashboardAppPage";
 import Inventory from "./pages/Inventory/Inventory";
 import Tasks from "./pages/Tasks/Tasks";
 import Jobs from "./pages/Jobs/Jobs";
+import DetailJob from "./pages/Jobs/Detail.jsx";
 import Roles from "./pages/Roles/Roles";
 import Users from "./pages/Users/Users";
 import Permissions from "./pages/Permissions/Permissions";
@@ -22,6 +23,9 @@ import Details from "./pages/PurchaseOrder/Details";
 import PurchaseOrderItems from "./pages/PurchaseOrder/PurchaseOrderItems";
 import Company from "./pages/Company/company.jsx";
 import Vendor from "./pages/vendor/vendor.jsx";
+import CreateFabrecatedItems from "./pages/Jobs/CreateFabrecatedItems.jsx";
+import Sequence from "./pages/Sequence/Sequence.jsx";
+import SequenceDetail from "./pages/Sequence/Detail.jsx";
 // ----------------------------------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
 import PasswordResetPage from "./pages/PasswordResetPage";
@@ -43,6 +47,9 @@ export default function Router() {
         { path: "users", element: <Users dispatch={dispatch} /> },
         { path: "roles", element: <Roles /> },
         { path: "jobs", element: <Jobs /> },
+        { path: "/detail-Job/:id", element: <DetailJob /> },
+        { path: "/create-items/:id", element: <CreateFabrecatedItems /> },
+        { path: "/update-items/:id", element: <CreateFabrecatedItems /> },
         { path: "contacts", element: <Contacts /> },
         { path: "vendors", element: <Vendor /> },
         { path: "purchaseorder", element: <PurchaseOrder /> },
@@ -53,6 +60,8 @@ export default function Router() {
         { path: "purchaseorderform/:id", element: <PurchaseOrderForm /> },
         { path: "companies", element: <Company /> },
         { path: "tasks", element: <Tasks /> },
+        { path: "sequence", element: <Sequence /> },
+        { path: "/sequence-detail/:id", element: <SequenceDetail /> },
         { path: "permissions", element: <Permissions dispatch={dispatch} /> },
       ],
     },

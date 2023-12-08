@@ -146,7 +146,7 @@ const Details = () => {
             </Card>
           )}
         </Paper>
-        <Paper style={{marginTop : '8px'}}>
+        <Paper style={{ marginTop: "8px" }}>
           <Card>
             <TableContainer>
               <Table>

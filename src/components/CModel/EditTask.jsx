@@ -1,15 +1,25 @@
-import { useMemo, useState } from 'react';
-import CTextField from '../CTextField/CTextField';
-import { Autocomplete, Button, Chip, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import CSelect from '../CSelect/CSelect';
-import { updateTasks } from '../../feature/tasksSlice';
-import { toast } from 'react-toastify';
-import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
+import { useMemo, useState } from "react";
+import CTextField from "../CTextField/CTextField";
+import {
+  Autocomplete,
+  Button,
+  Chip,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Modal,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import CSelect from "../CSelect/CSelect";
+import { updateTasks } from "../../feature/tasksSlice";
+import { toast } from "react-toastify";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 
 const EditTask = (props) => {
   const { currentTask, errorValue } = useSelector((state) => state.tasksSlice);
@@ -17,7 +27,7 @@ const EditTask = (props) => {
   const [data, setData] = useState({
     heatNo: currentTask.heatNo,
     description: currentTask.description,
-    comments: currentTask.comments ? currentTask.comments : '',
+    comments: currentTask.comments ? currentTask.comments : "",
     projectManager: currentTask.projectManager,
     QCI: currentTask.QCI,
     fitter: currentTask.fitter,
@@ -29,16 +39,20 @@ const EditTask = (props) => {
   const [status, setSelectedStatus] = useState(currentTask.status);
   const [userId, setSelectedUserId] = useState(currentTask.userId);
 
-  const currentTaskStartDate = currentTask.startedAt ? dayjs(currentTask.startedAt) : null;
-  const currentTaskEndDate = currentTask.completedAt ? dayjs(currentTask.completedAt) : null;
+  const currentTaskStartDate = currentTask.startedAt
+    ? dayjs(currentTask.startedAt)
+    : null;
+  const currentTaskEndDate = currentTask.completedAt
+    ? dayjs(currentTask.completedAt)
+    : null;
   const [selectedFile, setSelectedFile] = useState(null);
   const [perviewImage, setPerviewImage] = useState(currentTask.image);
   const selectData = [
-    { id: 1, name: 'Pending', value: 'pending' },
-    { id: 2, name: 'Approved', value: 'approved' },
-    { id: 3, name: 'Rejected', value: 'rejected' },
-    { id: 4, name: 'In Process', value: 'in_process' },
-    { id: 5, name: 'To Inspect', value: 'to_inspect' },
+    { id: 1, name: "Pending", value: "pending" },
+    { id: 2, name: "Approved", value: "approved" },
+    { id: 3, name: "Rejected", value: "rejected" },
+    { id: 4, name: "In Process", value: "in_process" },
+    { id: 5, name: "To Inspect", value: "to_inspect" },
   ];
 
   const [jodId, setJobId] = useState(currentTask.jobId);
@@ -48,9 +62,20 @@ const EditTask = (props) => {
       ? currentTask.rejectionReason // Extracting names from objects
       : []
   );
+  const [fullscreenImage, setFullscreenImage] = useState(null);
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
 
+  const openFullscreen = (image) => {
+    setFullscreenImage(image);
+    setIsFullscreenOpen(true);
+  };
+
+  const closeFullscreen = () => {
+    setFullscreenImage(null);
+    setIsFullscreenOpen(false);
+  };
   const handleChange = (event) => {
-    if (event.target.name === 'estimatedHour') {
+    if (event.target.name === "estimatedHour") {
       setEstimatedHour(event.target.value);
     } else {
       setData((prv) => ({ ...prv, [event.target.name]: event.target.value }));
@@ -69,50 +94,53 @@ const EditTask = (props) => {
 
   const handleSubmit = () => {
     const formData = new FormData();
-    formData.append('heatNo', data.heatNo);
-    formData.append('description', data.description);
-    formData.append('estimatedHour', Number(estimatedHour));
-    formData.append('comments', data.comments);
-    formData.append('jobId', Number(jodId));
-    formData.append('status', status);
-    formData.append('userId', userId);
-    formData.append('projectManager', data.projectManager);
-    formData.append('QCI', data.QCI);
-    formData.append('fitter', data.fitter);
-    formData.append('welder', data.welder);
-    formData.append('painter', data.painter);
-    formData.append('foreman', data.foreman);
+    formData.append("heatNo", data.heatNo);
+    formData.append("description", data.description);
+    formData.append("estimatedHour", Number(estimatedHour));
+    formData.append("comments", data.comments);
+    formData.append("jobId", Number(jodId));
+    formData.append("status", status);
+    formData.append("userId", userId);
+    formData.append("projectManager", data.projectManager);
+    formData.append("QCI", data.QCI);
+    formData.append("fitter", data.fitter);
+    formData.append("welder", data.welder);
+    formData.append("painter", data.painter);
+    formData.append("foreman", data.foreman);
     if (selectedFile) {
-      formData.append('image', selectedFile);
+      formData.append("image", selectedFile);
     }
     if (currentTaskStartDate) {
-      formData.append('startedAt', currentTaskStartDate.toISOString());
+      formData.append("startedAt", currentTaskStartDate.toISOString());
     }
     if (currentTaskEndDate) {
-      formData.append('completedAt', currentTaskEndDate.toISOString());
+      formData.append("completedAt", currentTaskEndDate.toISOString());
     }
     selectedReasons.forEach((value, index) => {
-      formData.append('rejectionReason', value);
+      formData.append("rejectionReason", value);
     });
 
-    dispatch(updateTasks({ formData: formData, id: currentTask.id })).then((res) => {
-      if (res.type === 'updateTasks/tasks/fulfilled') {
-        props.setOpen(false);
-        toast.success('Updated successfully !', {
-          position: toast.POSITION.TOP_RIGHT,
-        });
+    dispatch(updateTasks({ formData: formData, id: currentTask.id })).then(
+      (res) => {
+        if (res.type === "updateTasks/tasks/fulfilled") {
+          props.setOpen(false);
+          toast.success("Updated successfully !", {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
+        if (res.type === "updateTasks/tasks/rejected") {
+          props.setOpen(true);
+          toast.error(errorValue, {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
       }
-      if (res.type === 'updateTasks/tasks/rejected') {
-        props.setOpen(true);
-        toast.error(errorValue, {
-          position: toast.POSITION.TOP_RIGHT,
-        });
-      }
-    });
+    );
   };
 
   const remainingReasons = useMemo(
-    () => props.reasons.filter((reason) => !selectedReasons.includes(reason.name)),
+    () =>
+      props.reasons.filter((reason) => !selectedReasons.includes(reason.name)),
     [props.reasons, selectedReasons]
   );
 
@@ -121,40 +149,46 @@ const EditTask = (props) => {
   };
 
   return (
-    <div style={{ overflowY: selectedFile || perviewImage ? 'scroll' : '', maxHeight: '550px', overflowX: 'hidden' }}>
+    <div
+      style={{
+        overflowY: selectedFile || perviewImage ? "scroll" : "",
+        maxHeight: "550px",
+        overflowX: "hidden",
+      }}
+    >
       <div
         style={{
-          display: 'flex',
-          width: '100%',
-          flexDirection: 'column',
-          alignItems: 'center',
-          background: '#2065D1',
+          display: "flex",
+          width: "100%",
+          flexDirection: "column",
+          alignItems: "center",
+          background: "#2065D1",
           borderRadius: 10,
-          color: 'white',
-          marginBottom: '20px',
+          color: "white",
+          marginBottom: "20px",
         }}
       >
         <h3>Edit Task</h3>
       </div>
       <div
         style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
         }}
       >
         <div
           style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <CTextField
               defaultValue={data.heatNo}
               margin="5px 0px"
@@ -172,17 +206,17 @@ const EditTask = (props) => {
             jobId={props.data.jobId}
             initialValue={jodId}
             setinitialValue={setJobId}
-            padding={'0px 8px'}
+            padding={"0px 8px"}
           />
         </div>
 
         <div
           style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            alignItems: 'center',
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
           }}
         >
           <CTextField
@@ -194,7 +228,7 @@ const EditTask = (props) => {
             label="Description"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.projectManager}
             margin="5px 0px"
@@ -205,7 +239,7 @@ const EditTask = (props) => {
             label="Project Manager"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.QCI}
             margin="5px 0px"
@@ -216,7 +250,7 @@ const EditTask = (props) => {
             label="QCI"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.fitter}
             margin="5px 0px"
@@ -227,7 +261,7 @@ const EditTask = (props) => {
             label="Fitter"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.welder}
             margin="5px 0px"
@@ -238,7 +272,7 @@ const EditTask = (props) => {
             label="Welder"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.painter}
             margin="5px 0px"
@@ -249,7 +283,7 @@ const EditTask = (props) => {
             label="Painter"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.foreman}
             margin="5px 0px"
@@ -262,15 +296,15 @@ const EditTask = (props) => {
         </div>
         <div
           style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            margin: '10px 0px',
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            margin: "10px 0px",
           }}
         >
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <CTextField
               required={true}
               defaultValue={estimatedHour}
@@ -282,7 +316,7 @@ const EditTask = (props) => {
               label="Estimated Hour"
             />
           </div>
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <CSelect
               key={userId}
               disabled={false}
@@ -290,15 +324,25 @@ const EditTask = (props) => {
               data={props.users}
               initialValue={userId}
               setinitialValue={setSelectedUserId}
-              padding={'0px 0px'}
+              padding={"0px 0px"}
               filter="users"
             />
           </div>
         </div>
-        <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{ width: "100%", display: "flex", flexDirection: "column" }}
+        >
           <h3>Task Status</h3>
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '50%' }}>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <div style={{ width: "50%" }}>
               <FormControl fullWidth>
                 <InputLabel id="status-label">Select Status</InputLabel>
                 <Select
@@ -307,7 +351,7 @@ const EditTask = (props) => {
                   labelId="status-label"
                   margin="dense"
                   variant="outlined"
-                  sx={{ textAlign: 'left' }}
+                  sx={{ textAlign: "left" }}
                   value={status}
                   onChange={(event) => setSelectedStatus(event.target.value)}
                 >
@@ -320,8 +364,8 @@ const EditTask = (props) => {
               </FormControl>
             </div>
 
-            {status === 'rejected' && (
-              <div style={{ width: '50%' }}>
+            {status === "rejected" && (
+              <div style={{ width: "50%" }}>
                 <FormControl fullWidth>
                   <Autocomplete
                     fullWidth
@@ -343,15 +387,20 @@ const EditTask = (props) => {
                     }
                     filterSelectedOptions
                     renderInput={(params) => (
-                      <TextField {...params} variant="outlined" label="Select Reasons" placeholder="Select Reasons" />
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        label="Select Reasons"
+                        placeholder="Select Reasons"
+                      />
                     )}
-                    disabled={status === 'rejected' ? false : true}
+                    disabled={status === "rejected" ? false : true}
                   />
                 </FormControl>
               </div>
             )}
           </div>
-          {status === 'approved' || status === 'rejected' ? (
+          {status === "approved" || status === "rejected" ? (
             <CTextField
               defaultValue={data.comments}
               margin="10px 0px"
@@ -360,50 +409,100 @@ const EditTask = (props) => {
               onChange={handleChange}
               name="comments"
               label="Comment"
-              disabled={status === 'rejected' || status === 'approved' ? false : true}
+              disabled={
+                status === "rejected" || status === "approved" ? false : true
+              }
             />
           ) : null}
           <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DateTimePicker']}>
+              <DemoContainer components={["DateTimePicker"]}>
                 <div
                   style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: '10px',
-                    marginBottom: '10px',
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "10px",
+                    marginBottom: "10px",
                   }}
                 >
-                  <DateTimePicker sx={{ width: '100%' }} label="Started At" value={currentTaskStartDate} readOnly />
-                  <DateTimePicker sx={{ width: '100%' }} label="Completed At" value={currentTaskEndDate} readOnly />
+                  <DateTimePicker
+                    sx={{ width: "100%" }}
+                    label="Started At"
+                    value={currentTaskStartDate}
+                    readOnly
+                  />
+                  <DateTimePicker
+                    sx={{ width: "100%" }}
+                    label="Completed At"
+                    value={currentTaskEndDate}
+                    readOnly
+                  />
                 </div>
               </DemoContainer>
             </LocalizationProvider>
           </div>
         </div>
         {perviewImage ? (
-          <div style={{ width: '100%', textAlign: 'center' }}>
+          <div style={{ width: "100%", textAlign: "center" }}>
             <img
               alt="task"
-              style={{ width: '700px', height: '350px', objectFit: 'contain', marginBottom: '10px' }}
+              style={{
+                width: "700px",
+                height: "350px",
+                objectFit: "contain",
+                marginBottom: "10px",
+              }}
               src={perviewImage}
+              onClick={() => openFullscreen(perviewImage)}
             />
           </div>
         ) : (
-          ''
+          ""
         )}
         <CTextField name="File" type="file" onChange={handleFileChange} />
         <Button
           disabled={props.isLoading}
           onClick={handleSubmit}
           variant="outlined"
-          sx={{ width: '100%', margin: '10px 0px 0px 0px' }}
+          sx={{ width: "100%", margin: "10px 0px 0px 0px" }}
         >
-          {props.isLoading ? 'Loading..' : ' Submit'}
+          {props.isLoading ? "Loading.." : " Submit"}
         </Button>
       </div>
+      <Modal
+        open={isFullscreenOpen}
+        onClose={closeFullscreen}
+        aria-labelledby="image-modal"
+        aria-describedby="image-modal-description"
+      >
+        <div>
+          <button
+            onClick={closeFullscreen}
+            style={{
+              position: "absolute",
+              top: "8%",
+              right: "3%",
+              padding: "10px",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              color: "black",
+              fontSize: "20px",
+              fontWeight: "bold",
+            }}
+          >
+            X
+          </button>
+
+          <img
+            alt="fullscreen"
+            style={{ width: "100%", height: "auto", marginTop: "30px" }}
+            src={fullscreenImage}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { sentenceCase } from "change-case";
 import Papa from "papaparse";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import CModel from "../../components/CModel/CModel";
 // @mui
 import {
@@ -21,7 +22,6 @@ import {
   TableContainer,
   TablePagination,
   Breadcrumbs,
-  
 } from "@mui/material";
 
 import { HomeRounded } from "@material-ui/icons";
@@ -88,6 +88,10 @@ export default function Jobs(props) {
   const canDeleteJob = hasPermission(userPermissions, PERMISSIONS.DELETE_JOB);
   const canExportJob = hasPermission(userPermissions, PERMISSIONS.EXPORT_JOB);
   const canViewJobList = hasPermission(userPermissions, PERMISSIONS.VIEW_JOB);
+  const canDeatilJobList = hasPermission(
+    userPermissions,
+    PERMISSIONS.Detail_Job
+  );
 
   useEffect(() => {
     fetchTasks();
@@ -229,6 +233,10 @@ export default function Jobs(props) {
   };
   const handleOpenModel = () => {
     setOpenModel(!open);
+  };
+  const navigate = useNavigate();
+  const handleDetail = (id) => {
+    navigate(`/detail-Job/${id}`);
   };
 
   useEffect(() => {
@@ -416,6 +424,14 @@ export default function Jobs(props) {
                                   onClick={() => handleDelete(id)}
                                 >
                                   <Iconify icon={"eva:trash-2-outline"} />
+                                </MenuItem>
+                              )}
+                              {canDeatilJobList && (
+                                <MenuItem
+                                  sx={{ color: "error.main" }}
+                                  onClick={() => handleDetail(id)}
+                                >
+                                  <Iconify icon={"eva:info-outline"} />
                                 </MenuItem>
                               )}
                             </TableCell>

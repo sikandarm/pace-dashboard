@@ -1,11 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import { filter } from "lodash";
-import Papa from "papaparse";
-import { sentenceCase } from "change-case";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import CModel from "../../components/CModel/CModel";
-// @mui
 import {
   Card,
   Table,
@@ -21,42 +18,29 @@ import {
   TableContainer,
   TablePagination,
   Breadcrumbs,
-  Modal,
 } from "@mui/material";
 // components
-import Label from "../../components/label";
 import Iconify from "../../components/iconify";
 import Scrollbar from "../../components/scrollbar";
 // sections
 import { UserListHead, UserListToolbar } from "../../sections/@dashboard/user";
 // mock
-import { getUsers } from "../../feature/userSlice";
+import { deletesequence } from "../../feature/sequenceSlice";
 import { useSelector } from "react-redux";
-// import { deleteInventory, getInventory } from '../../feature/inventorySlice';
-import {
-  deleteTasks,
-  getRejectionReasons,
-  getSingleTasks,
-  getTasks,
-} from "../../feature/tasksSlice";
-import { getJobs } from "../../feature/jobSlice";
-import ApiCall from "../../utils/apicall";
+import { getSequence } from "../../feature/sequenceSlice";
 import { HomeRounded } from "@material-ui/icons";
+// import ApiCall from "../../utils/apicall";
 import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
-// import ConformationModel from '../../components/CModel/ConformationModel';
-
-// ----------------------------------------------------------------------
+import { useNavigate } from "react-router-dom";
 const TABLE_HEAD = [
-  { id: "image", label: "Image", alignRight: false },
-  { id: "pmkNumber", label: "PMK Number", alignRight: false },
-  { id: "heatNo", label: "Heat Number", alignRight: false },
-  { id: "description", label: "Description", alignRight: false },
-  { id: "status", label: "Status", alignRight: false },
-  // { id: 'comments', label: 'Comments', alignRight: false },
+  {
+    id: "sequence_name",
+    label: "Sequence Name",
+    alignRight: false,
+  },
+  { id: "Job", label: "Job Name", alignRight: false },
   { id: "" },
 ];
-
-// ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -74,87 +58,41 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function Tasks(props) {
+export default function Sequence() {
   const dispatch = useDispatch();
-  const open = null;
+  const open = false;
   const [page, setPage] = useState(0);
   const [order, setOrder] = useState("asc");
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState("name");
   const [filterName, setFilterName] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [conformation, setConformation] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const [openModel, setOpenModel] = useState(false);
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
-  const [deleteId, setDeleteId] = useState("");
-  const { tasks, isTaskLoading, rejectionReasons } = useSelector(
-    (state) => state.tasksSlice
+  const navigation = useNavigate();
+  const { sequence, isSequenceLoading } = useSelector(
+    (state) => state.sequenceSlice
   );
-  const { jobs } = useSelector((state) => state.jobSlice);
-  const { usersList, loginUser } = useSelector((state) => state.userSlice);
-  const [allTasks, setAllTasks] = useState([]);
+  const { loginUser } = useSelector((state) => state.userSlice);
   const { permissions: userPermissions } = loginUser.decodedToken;
-  const canAddTask = hasPermission(userPermissions, PERMISSIONS.ADD_TASK);
-  const canEditTask = hasPermission(userPermissions, PERMISSIONS.EDIT_TASK);
-  const canDeleteTask = hasPermission(userPermissions, PERMISSIONS.DELETE_TASK);
-  const canExportTask = hasPermission(userPermissions, PERMISSIONS.EXPORT_TASK);
-  const canViewTaskList = hasPermission(userPermissions, PERMISSIONS.VIEW_TASK);
-  const [fullscreenImage, setFullscreenImage] = useState(null);
-  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
+  const canAddSequence = hasPermission(
+    userPermissions,
+    PERMISSIONS.ADD_SEQUENCE
+  );
+  const canEditSequence = hasPermission(
+    userPermissions,
+    PERMISSIONS.EDIT_SEQUENCE
+  );
+  const canDeleteSequence = hasPermission(
+    userPermissions,
+    PERMISSIONS.DELETE_SEQUENCE
+  );
 
-  const openFullscreen = (image) => {
-    setFullscreenImage(image);
-    setIsFullscreenOpen(true);
-  };
-
-  const closeFullscreen = () => {
-    setFullscreenImage(null);
-    setIsFullscreenOpen(false);
-  };
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
-    try {
-      const response = await ApiCall.get("/task/export");
-      setAllTasks(response.data.data);
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    }
-  };
-
-  const handleExport = () => {
-    const customCsvData = allTasks.map((task) => ({
-      pmkNumber: task.pmkNumber,
-      heatNo: task.heatNo,
-      userName: task.userName,
-      JobName: task.JobName,
-      estimatedHour: task.estimatedHour,
-      description: task.description,
-      status: task.status,
-      comments: task.comments,
-      projectManager: task.projectManager,
-      QCI: task.QCI,
-      fitter: task.fitter,
-      welder: task.welder,
-      painter: task.painter,
-      foreman: task.foreman,
-      startedAt: task.startedAt,
-      completedAt: task.completedAt,
-    }));
-
-    const csvData = Papa.unparse(customCsvData, { header: true });
-    const blob = new Blob([csvData], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "tasks.csv";
-    a.click();
-
-    URL.revokeObjectURL(url);
-  };
+  const canViewSequenceList = hasPermission(
+    userPermissions,
+    PERMISSIONS.VIEW_SEQUENCE
+  );
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -164,7 +102,7 @@ export default function Tasks(props) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = tasks.map((n) => n.pmkNumber);
+      const newSelecteds = sequence.map((n) => n.sequence_name);
       setSelected(newSelecteds);
       return;
     }
@@ -180,9 +118,9 @@ export default function Tasks(props) {
     });
     if (query) {
       return filter(
-        tasks,
+        sequence,
         (_inv) =>
-          _inv.pmkNumber.toLowerCase().indexOf(query.toLowerCase()) !== -1
+          _inv.sequence_name.toLowerCase().indexOf(query.toLowerCase()) !== -1
       );
     }
     return stabilizedThis.map((el) => el[0]);
@@ -203,47 +141,41 @@ export default function Tasks(props) {
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tasks.length) : 0;
-
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - sequence.length) : 0;
   const filteredUsers = applySortFilter(
-    tasks,
+    sequence,
     getComparator(order, orderBy),
     filterName
   );
-
   const isNotFound = !filteredUsers.length && !!filterName;
 
   const handleDelete = (id) => {
-    dispatch(deleteTasks(deleteId)).then((res) => {
-      if (res.type === "deleteTasks/tasks/fulfilled") {
-        setConformation(false);
-      }
-    });
+    dispatch(deletesequence(id));
   };
-
   const handleOpenModel = () => {
     setOpenModel(!open);
   };
 
   useEffect(() => {
-    dispatch(getTasks());
-    dispatch(getJobs());
-    dispatch(getUsers());
-    dispatch(getRejectionReasons());
+    // dispatch(getUsers());
+    dispatch(getSequence());
   }, [dispatch]);
+
+  const handleOpenDetail = (id) => {
+    navigation(`/sequence-detail/${id}`);
+  };
+
   return (
     <>
       <Helmet>
-        <title> Tasks | Pace Tasks </title>
+        <title> Sequence | Pace Sequence </title>
       </Helmet>
       {openModel ? (
         <CModel
-          users={usersList}
-          isLoading={isTaskLoading}
+          isLoading={isSequenceLoading}
           open={openModel}
           setOpen={setOpenModel}
-          jobs={jobs}
-          filter={"add-task"}
+          filter={"add-sequence"}
         />
       ) : (
         ""
@@ -251,30 +183,15 @@ export default function Tasks(props) {
       {openUpdateModel ? (
         <CModel
           open={openUpdateModel}
-          isLoading={isTaskLoading}
+          isLoading={isSequenceLoading}
           data={selectedRow}
           setOpen={setOpenUpdateModel}
-          filter={"edit-task"}
-          jobs={jobs}
-          users={usersList}
-          reasons={rejectionReasons}
+          filter={"update-sequence"}
         />
       ) : (
         ""
       )}
-      {conformation ? (
-        <CModel
-          filter={"conformation"}
-          isLoading={isTaskLoading}
-          open={conformation}
-          setOpen={setConformation}
-          handleClick={handleDelete}
-          title="Are you sure?"
-        />
-      ) : (
-        ""
-      )}
-      {canViewTaskList && (
+      {canViewSequenceList && (
         <Container>
           <Stack
             direction="row"
@@ -286,27 +203,18 @@ export default function Tasks(props) {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <HomeRounded color="inherit" />
                 <Typography variant="body1" color="textPrimary">
-                  / Task
+                  / Sequence
                 </Typography>
               </Stack>
             </Breadcrumbs>
             <div style={{ display: "flex", gap: "10px" }}>
-              {canExportTask && (
-                <Button
-                  onClick={handleExport}
-                  variant="outlined"
-                  startIcon={<Iconify icon="ph:download-fill" />}
-                >
-                  Export Tasks
-                </Button>
-              )}
-              {canAddTask && (
+              {canAddSequence && (
                 <Button
                   onClick={handleOpenModel}
                   variant="contained"
                   startIcon={<Iconify icon="eva:plus-fill" />}
                 >
-                  New Task
+                  New Sequence
                 </Button>
               )}
             </div>
@@ -322,16 +230,15 @@ export default function Tasks(props) {
               }}
             >
               <UserListToolbar
-                label={"Search task.."}
+                label={"Search sequence.."}
                 numSelected={selected.length}
                 filterName={filterName}
                 onFilterName={handleFilterByName}
               />
-
               <TablePagination
                 rowsPerPageOptions={[10, 25]}
                 component="div"
-                count={tasks.length}
+                count={sequence.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -343,42 +250,39 @@ export default function Tasks(props) {
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
                   <UserListHead
-                    order={order}
+                    // order={order}
                     orderBy={orderBy}
                     headLabel={TABLE_HEAD}
-                    rowCount={tasks.length}
+                    rowCount={sequence.length}
+                    numSelected={selected.length}
                     onRequestSort={handleRequestSort}
                     onSelectAllClick={handleSelectAllClick}
                   />
                   <TableBody>
+                    {filteredUsers.length === 0 && !isNotFound && (
+                      <TableRow>
+                        <TableCell
+                          align="center"
+                          colSpan={TABLE_HEAD.length}
+                          sx={{ py: 3 }}
+                        >
+                          <Paper sx={{ textAlign: "center" }}>
+                            <Typography variant="h6" paragraph>
+                              No Record found
+                            </Typography>
+                          </Paper>
+                        </TableCell>
+                      </TableRow>
+                    )}
                     {filteredUsers
                       .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
                       .map((row) => {
-                        const {
-                          id,
-                          pmkNumber,
-                          heatNo,
-                          description,
-                          status,
-                          image,
-                        } = row;
+                        const { id, sequence_name, Job } = row;
                         return (
                           <TableRow hover key={id} tabIndex={-1}>
-                            <TableCell align="left">
-                              {image ? (
-                                <img
-                                  alt="task"
-                                  style={{ width: "50px", height: "40px" }}
-                                  src={image}
-                                  onClick={() => openFullscreen(image)}
-                                />
-                              ) : (
-                                "_"
-                              )}
-                            </TableCell>
                             <TableCell
                               component="th"
                               scope="row"
@@ -390,57 +294,38 @@ export default function Tasks(props) {
                                   sx={{ padding: "0px 15px" }}
                                   noWrap
                                 >
-                                  {pmkNumber}
+                                  {sequence_name}
                                 </Typography>
                               </Stack>
                             </TableCell>
-
-                            <TableCell align="left">{heatNo}</TableCell>
-                            <TableCell align="left">
-                              {description ? description : "_"}
-                            </TableCell>
-                            <TableCell align="left">
-                              <Label
-                                color={
-                                  status === "approved"
-                                    ? "success"
-                                    : status === "in_process"
-                                    ? "default"
-                                    : status === "pending"
-                                    ? "warning"
-                                    : "error"
-                                }
-                              >
-                                {sentenceCase(status)}
-                              </Label>
-                            </TableCell>
+                            <TableCell align="left">{Job}</TableCell>
 
                             <TableCell
                               align="right"
                               style={{ display: "flex" }}
                             >
-                              {canEditTask && (
+                              {canEditSequence && (
                                 <MenuItem
-                                  key={id}
                                   onClick={() => {
-                                    dispatch(getSingleTasks(id)).then((res) => {
-                                      setSelectedRow(row);
-                                      setOpenUpdateModel(!openUpdateModel);
-                                    });
+                                    setSelectedRow(row);
+                                    setOpenUpdateModel(!openUpdateModel);
                                   }}
                                 >
                                   <Iconify icon={"eva:edit-fill"} />
                                 </MenuItem>
                               )}
-                              {canDeleteTask && (
+
+                              {canDeleteSequence && (
                                 <MenuItem
                                   sx={{ color: "error.main" }}
-                                  onClick={() => {
-                                    setConformation(true);
-                                    setDeleteId(id);
-                                  }}
+                                  onClick={() => handleDelete(id)}
                                 >
                                   <Iconify icon={"eva:trash-2-outline"} />
+                                </MenuItem>
+                              )}
+                              {canEditSequence && (
+                                <MenuItem onClick={() => handleOpenDetail(id)}>
+                                  <Iconify icon={"eva:info-outline"} />
                                 </MenuItem>
                               )}
                             </TableCell>
@@ -485,7 +370,7 @@ export default function Tasks(props) {
             <TablePagination
               rowsPerPageOptions={[10, 25]}
               component="div"
-              count={tasks.length}
+              count={sequence.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -494,38 +379,6 @@ export default function Tasks(props) {
           </Card>
         </Container>
       )}
-      <Modal
-        open={isFullscreenOpen}
-        onClose={closeFullscreen}
-        aria-labelledby="image-modal"
-        aria-describedby="image-modal-description"
-      >
-        <div>
-          <button
-            onClick={closeFullscreen}
-            style={{
-              position: "absolute",
-              top: "8%",
-              right: "3%",
-              padding: "10px",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: "black",
-              fontSize: "20px",
-              fontWeight: "bold",
-            }}
-          >
-            X
-          </button>
-
-          <img
-            alt="fullscreen"
-            style={{ width: "100%", height: "auto", marginTop: "30px" }}
-            src={fullscreenImage}
-          />
-        </div>
-      </Modal>
     </>
   );
 }

@@ -1,63 +1,74 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import ApiCall from '../utils/apicall';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import ApiCall from "../utils/apicall";
 
-export const getJobs = createAsyncThunk('getJobs/jobs', async (ThunkApi) => {
+export const getJobs = createAsyncThunk("getJobs/jobs", async (ThunkApi) => {
   try {
-    const res = await ApiCall.get('/job');
-    console.log('checking');
+    const res = await ApiCall.get("/job");
     return res.data.data.jobs;
   } catch (error) {
     return ThunkApi.rejectWithValue(error.response.data.message);
   }
 });
 
-export const createJob = createAsyncThunk('createJob/jobs', async (data, ThunkApi) => {
-  try {
-    const res = await ApiCall.post('/job', data);
-    return res.data;
-  } catch (error) {
-    const { message } = error.response.data;
-    throw new Error(message);
-  }
-});
-
-export const updateJob = createAsyncThunk('updateJobs/jobs', async (data, ThunkApi) => {
-  try {
-    const res = await ApiCall.put(`/job/${data.id}`, data);
-    console.log(res);
-    return res.data;
-  } catch (error) {
-    const { message } = error.response.data;
-    throw new Error(message);
-  }
-});
-
-export const deleteJob = createAsyncThunk('deleteJob/jobs', async (data, ThunkApi) => {
-  try {
-    const res = await ApiCall.delete(`/job/${data}`);
-    if (res.data.success) {
-      return data;
+export const createJob = createAsyncThunk(
+  "createJob/jobs",
+  async (data, ThunkApi) => {
+    try {
+      const res = await ApiCall.post("/job", data);
+      return res.data;
+    } catch (error) {
+      const { message } = error.response.data;
+      throw new Error(message);
     }
-  } catch (error) {
-    return ThunkApi.rejectWithValue('Error deleting in');
   }
-});
+);
 
-export const importJob = createAsyncThunk('ImportJob/jobs', async (data, ThunkApi) => {
-  try {
-    const res = await ApiCall.post('/job/import', data, {
-      headers: {
-        'Content-Type': 'application/json', // Set the content type to indicate JSON data
-      },
-    });
-    return res.data.data;
-  } catch (error) {
-    return error;
+export const updateJob = createAsyncThunk(
+  "updateJobs/jobs",
+  async (data, ThunkApi) => {
+    try {
+      const res = await ApiCall.put(`/job/${data.id}`, data);
+      console.log(res);
+      return res.data;
+    } catch (error) {
+      const { message } = error.response.data;
+      throw new Error(message);
+    }
   }
-}); 
+);
+
+export const deleteJob = createAsyncThunk(
+  "deleteJob/jobs",
+  async (data, ThunkApi) => {
+    try {
+      const res = await ApiCall.delete(`/job/${data}`);
+      if (res.data.success) {
+        return data;
+      }
+    } catch (error) {
+      return ThunkApi.rejectWithValue("Error deleting in");
+    }
+  }
+);
+
+export const importJob = createAsyncThunk(
+  "ImportJob/jobs",
+  async (data, ThunkApi) => {
+    try {
+      const res = await ApiCall.post("/job/import", data, {
+        headers: {
+          "Content-Type": "application/json", // Set the content type to indicate JSON data
+        },
+      });
+      return res.data.data;
+    } catch (error) {
+      return error;
+    }
+  }
+);
 
 export const jobSlice = createSlice({
-  name: 'jobs',
+  name: "jobs",
   initialState: {
     jobs: [],
     isJobLoading: false,

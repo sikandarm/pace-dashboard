@@ -68,6 +68,16 @@ const navConfig = [
     ],
   },
   {
+    title: "Sequence",
+    path: "/sequence",
+    icon: icon("ic_cart"),
+    requiredPermission: [
+      PERMISSIONS.ADD_SEQUENCE,
+      PERMISSIONS.DELETE_SEQUENCE,
+      PERMISSIONS.VIEW_SEQUENCE,
+    ],
+  },
+  {
     title: "Tasks",
     path: "/tasks",
     icon: icon("ic_cart"),
@@ -92,9 +102,9 @@ const navConfig = [
     path: "/purchaseorder",
     icon: icon("ic_cart"),
     requiredPermission: [
-      PERMISSIONS.VIEW_CONTACT,
-      PERMISSIONS.ADD_CONTACT,
-      PERMISSIONS.EXPORT_CONTACT,
+      PERMISSIONS.ADD_PURCHASE,
+      PERMISSIONS.EDIT_PURCHASE,
+      PERMISSIONS.DELETE_PURCHASE,
     ],
   },
   {
@@ -102,9 +112,9 @@ const navConfig = [
     path: "/companies",
     icon: icon("ic_cart"),
     requiredPermission: [
-      PERMISSIONS.VIEW_CONTACT,
-      PERMISSIONS.ADD_CONTACT,
-      PERMISSIONS.EXPORT_CONTACT,
+      PERMISSIONS.ADD_Company,
+      PERMISSIONS.Edit_Company,
+      PERMISSIONS.Delete_Company,
     ],
   },
   {
@@ -112,9 +122,9 @@ const navConfig = [
     path: "/vendors",
     icon: icon("ic_cart"),
     requiredPermission: [
-      PERMISSIONS.VIEW_CONTACT,
-      PERMISSIONS.ADD_CONTACT,
-      PERMISSIONS.EXPORT_CONTACT,
+      PERMISSIONS.ADD_VENDOR,
+      PERMISSIONS.Edit_VENDOR,
+      PERMISSIONS.Delete_VENDOR,
     ],
   },
 ];

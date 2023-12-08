@@ -6,10 +6,10 @@ import permissionSlice from "../feature/permissionsSlice";
 import roleSlice from "../feature/roleSlice";
 import ContactSlice from "../feature/ContactSlice";
 import tasksSlice from "../feature/tasksSlice";
+import sequenceSlice from "../feature/sequenceSlice";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import thunk from "redux-thunk";
-
 
 const persistConfig = {
   key: "root",
@@ -25,6 +25,7 @@ export const rootReducer = combineReducers({
   tasksSlice,
   roleSlice,
   ContactSlice,
+  sequenceSlice,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
