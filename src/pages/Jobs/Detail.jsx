@@ -20,6 +20,7 @@ import {
   TableRow,
   TableBody,
   TableHead,
+  MenuItem,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -98,9 +99,11 @@ function Detail() {
   const handleOpenCreate = (id) => {
     navigate(`/create-items/${id}`);
   };
-  const handleOpenUpdate = (fabricateditems) => {
-    navigate(`/update-items/${id}`, { state: { fabricateditems } });
+
+  const handleDetails = (uniqueName) => {
+    navigate(`/fabricated-item-details/${uniqueName}`);
   };
+
   return (
     <div>
       <Helmet>
@@ -129,27 +132,15 @@ function Detail() {
             alignItems: "center",
           }}
         >
-          {fabricateditems && fabricateditems.length > 0
-            ? canUpdateFabricatedItems && (
-                <Button
-                  onClick={() => handleOpenUpdate(fabricateditems)}
-                  variant="contained"
-                  color="primary"
-                  startIcon={<Iconify icon="eva:plus-fill" />}
-                  style={{ marginBottom: "15px" }}
-                >
-                  Update Item
-                </Button>
-              )
-            : canAddFabricatedItems && (
-                <Button
-                  onClick={() => handleOpenCreate(id)}
-                  variant="contained"
-                  startIcon={<Iconify icon="eva:plus-fill" />}
-                >
-                  Add Item
-                </Button>
-              )}
+          {canAddFabricatedItems && (
+            <Button
+              onClick={() => handleOpenCreate(id)}
+              variant="contained"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+            >
+              Add Item
+            </Button>
+          )}
         </div>
 
         <Paper>
@@ -163,7 +154,9 @@ function Detail() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Fabricated Item Name</TableCell>
-                    <TableCell>Fabricated Item Quantity</TableCell>
+                    {/* <TableCell>Fabricated Item Quantity</TableCell> */}
+                    {/* <TableCell>PO Items</TableCell> */}
+                    <TableCell></TableCell>
                     <TableCell></TableCell>
                     {/* <TableCell>Job Name</TableCell> */}
                     {/* <TableCell>PO Number</TableCell> */}
@@ -172,17 +165,26 @@ function Detail() {
                 </TableHead>
                 <TableBody>
                   {fabricateditems &&
-                    fabricateditems.map((item, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{item.name}</TableCell>
-                        <TableCell>{item.quantity}</TableCell>
-                        {/* <TableCell>{item.Job.name}</TableCell> */}
-                        <TableCell>
-                          {/* {item.Job.PurchaseOrder.po_number} */}
-                        </TableCell>
-                        {/* <TableCell>{item.Job.PurchaseOrder.status}</TableCell> */}
-                      </TableRow>
-                    ))}
+                    [...new Set(fabricateditems.map((item) => item.name))].map(
+                      (uniqueName, index) => (
+                        <React.Fragment key={index}>
+                          <TableRow>
+                            <TableCell>{uniqueName}</TableCell>
+                            <TableCell
+                              align="right"
+                              style={{ display: "flex" }}
+                            >
+                              <MenuItem
+                                sx={{ color: "error.main" }}
+                                onClick={() => handleDetails(uniqueName)}
+                              >
+                                <Iconify icon={"eva:info-outline"} />
+                              </MenuItem>
+                            </TableCell>
+                          </TableRow>
+                        </React.Fragment>
+                      )
+                    )}
                 </TableBody>
               </Table>
             </TableContainer>

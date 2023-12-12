@@ -12,23 +12,28 @@ import {
   Breadcrumbs,
   Stack,
   Typography,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
 import { HomeRounded } from "@material-ui/icons";
 import { Add as AddIcon, Remove as RemoveIcon } from "@material-ui/icons";
 import ApiCall from "../../utils/apicall";
 
 const CreateFabrecatedItems = () => {
-  const [fields, setFields] = useState([{ name: "", quantity: "" }]);
+  const [fields, setFields] = useState([{ quantity: "", poitems_id: "" }]);
+  const [endProduct, setEndProduct] = useState("");
+  const [poItems, setPoItems] = useState([]);
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { fabricateditems } = location.state || {};
-
   const isUpdateMode = Boolean(fabricateditems);
 
   useEffect(() => {
     if (isUpdateMode) {
-      setFields(fabricateditems);
+      setEndProduct(fabricateditems[0]?.name || "");
+      setFields(fabricateditems[0]?.items || []);
     }
   }, [isUpdateMode, fabricateditems]);
 
@@ -37,10 +42,10 @@ const CreateFabrecatedItems = () => {
     const duplicateItems = [];
 
     for (const item of items) {
-      if (uniqueItems.has(item.name)) {
-        duplicateItems.push(item.name);
+      if (uniqueItems.has(item.poitems_id)) {
+        duplicateItems.push(item.poitems_id);
       }
-      uniqueItems.add(item.name);
+      uniqueItems.add(item.poitems_id);
     }
 
     return duplicateItems;
@@ -49,16 +54,21 @@ const CreateFabrecatedItems = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (fields.some((item) => !item.name)) {
-      toast.error("Item Name is required for all items", {
+    if (!endProduct) {
+      toast.error("End Product is required", {
         position: "top-right",
       });
       return;
     }
 
     for (const item of fields) {
-      if (item.quantity === "" || isNaN(item.quantity) || item.quantity <= 0) {
-        toast.error("Quantity is required and must be a non-negative number", {
+      if (
+        item.quantity === "" ||
+        isNaN(item.quantity) ||
+        item.quantity <= 0 ||
+        !item.poitems_id
+      ) {
+        toast.error("Please fill in all fields for each item", {
           position: "top-right",
         });
         return;
@@ -68,50 +78,48 @@ const CreateFabrecatedItems = () => {
     const duplicateItems = validateDuplicates(fields);
 
     if (duplicateItems.length > 0) {
-      toast.error("Duplicate Items", { position: "top-right" });
+      toast.error("Duplicate POItems selected", { position: "top-right" });
       return;
     }
 
     try {
       const createOrUpdateItems = async () => {
-        const promises = fields.map((field) => {
-          if (isUpdateMode) {
-            // Handle update logic here
-            return ApiCall.put(
-              `/fabricated-items/update-fabricated-item/${field.id}`,
-              {
-                name: field.name,
-                quantity: field.quantity,
-                job_Id: id,
-              }
-            );
-          } else {
-            // Handle create logic here
-            return ApiCall.post("/fabricated-items/create-fabricated-item", {
-              name: field.name,
-              quantity: field.quantity,
-              job_Id: id,
-            });
-          }
-        });
+        const payload = {
+          name: endProduct,
+          items: fields,
+          job_Id: id,
+        };
 
-        try {
-          await Promise.all(promises);
-          navigate(`/detail-Job/${id}`);
-          if (isUpdateMode) {
-            showSuccessToast("Items updated successfully");
-          } else {
-            showSuccessToast("Items created successfully");
-          }
-        } catch (error) {
-          console.error("An error occurred during create/update:", error);
-          showErrorToast(error.response?.data?.data || "An error occurred");
+        if (isUpdateMode) {
+          // Handle update logic here
+          await ApiCall.put(
+            `/fabricated-items/update-fabricated-item/${fabricateditems[0]?.id}`,
+            payload
+          );
+        } else {
+          // Handle create logic here]
+          fields.map(async (items) => {
+            await ApiCall.post("/fabricated-items/create-fabricated-item", {
+              name: endProduct,
+              job_Id: id,
+              quantity: items.quantity,
+              poitems_id: items.poitems_id,
+            });
+          });
+        }
+
+        navigate(`/detail-Job/${id}`);
+        if (isUpdateMode) {
+          showSuccessToast("Items updated successfully");
+        } else {
+          showSuccessToast("Items created successfully");
         }
       };
 
       createOrUpdateItems();
     } catch (error) {
       console.error("An error occurred:", error);
+      showErrorToast(error.response?.data?.data || "An error occurred");
     }
   };
 
@@ -122,7 +130,7 @@ const CreateFabrecatedItems = () => {
   };
 
   const handleAddField = () => {
-    setFields([...fields, { name: "", quantity: "" }]);
+    setFields([...fields, { quantity: "", poitems_id: "" }]);
   };
 
   const handleRemoveField = (index) => {
@@ -133,6 +141,21 @@ const CreateFabrecatedItems = () => {
     updatedFields.splice(index, 1);
     setFields(updatedFields);
   };
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const res = await ApiCall.get(
+          `/fabricated-items/get-poitem-perjob/${id}`
+        );
+        setPoItems(res.data.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchItems();
+  }, [id]);
 
   return (
     <>
@@ -159,6 +182,23 @@ const CreateFabrecatedItems = () => {
             </Breadcrumbs>
           </Stack>
           <form onSubmit={handleSubmit}>
+            <Grid container spacing={2} alignItems="center">
+              <Grid
+                item
+                xs={3}
+                style={{ marginLeft: "30%", marginBottom: "2%" }}
+              >
+                <FormControl fullWidth>
+                  <TextField
+                    onChange={(event) => setEndProduct(event.target.value)}
+                    name="endProduct"
+                    label="End Product"
+                    required
+                    value={endProduct}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
             {fields.map((field, index) => (
               <Grid container spacing={2} alignItems="center" key={index}>
                 <Grid item xs={2}>
@@ -172,20 +212,7 @@ const CreateFabrecatedItems = () => {
                     <AddIcon />
                   </IconButton>
                 </Grid>
-                <Grid item xs={4}>
-                  <FormControl fullWidth>
-                    <TextField
-                      onChange={(event) =>
-                        handleFieldChange(index, "name", event.target.value)
-                      }
-                      name={`name-${index}`}
-                      label="Name"
-                      //  required={true}
-                      value={field.name}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={4} style={{ marginBottom: "10px" }}>
+                <Grid item xs={3} style={{ marginBottom: "5px" }}>
                   <FormControl fullWidth>
                     <TextField
                       onChange={(event) =>
@@ -195,6 +222,36 @@ const CreateFabrecatedItems = () => {
                       label="Quantity"
                       value={field.quantity}
                     />
+                  </FormControl>
+                </Grid>
+
+                <Grid item xs={3} style={{ marginBottom: "5px" }}>
+                  <FormControl fullWidth>
+                    <InputLabel htmlFor={`label-${index}`}>
+                      Select POItems
+                    </InputLabel>
+                    <Select
+                      value={field.poitems_id}
+                      onChange={(event) =>
+                        handleFieldChange(
+                          index,
+                          "poitems_id",
+                          event.target.value
+                        )
+                      }
+                      id={`label-${index}`}
+                    >
+                      {poItems.length === 0 && (
+                        <MenuItem disabled value="">
+                          No Task Found
+                        </MenuItem>
+                      )}
+                      {poItems.map((dataItem) => (
+                        <MenuItem key={dataItem.id} value={dataItem.id}>
+                          {dataItem.itemName}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </FormControl>
                 </Grid>
               </Grid>

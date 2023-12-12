@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ApiCall from "../../utils/apicall";
 import { HomeRounded } from "@material-ui/icons";
@@ -8,7 +8,7 @@ import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 import { useSelector } from "react-redux";
 import CModel from "../../components/CModel/CModel";
 import {
-  Card,
+  // Card,
   Stack,
   Paper,
   Typography,
@@ -27,8 +27,7 @@ import { useState } from "react";
 function Detail() {
   const { id } = useParams();
   const open = false;
-  const [sequencetask, setsequencetask] = useState(null);
-  console.log(sequencetask, "++++++");
+  const [sequencetask, setsequencetask] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [openModel, setOpenModel] = useState(false);
@@ -36,6 +35,8 @@ function Detail() {
   const { sequence, isSequenceLoading } = useSelector(
     (state) => state.sequenceSlice
   );
+  const [hasFetchedData, setHasFetchedData] = useState(false);
+
   const { permissions: userPermissions } = loginUser.decodedToken;
   const canAddSequence = hasPermission(
     userPermissions,
@@ -45,6 +46,16 @@ function Detail() {
     userPermissions,
     PERMISSIONS.VIEW_SEQUENCE
   );
+  const location = useLocation();
+  const { row } = location.state || {};
+
+  const handleBackClick = () => {
+    navigate("/sequence");
+  };
+
+  const handleOpenModel = () => {
+    setOpenModel(!open);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,20 +67,33 @@ function Detail() {
           setError("ss");
         }
       } catch (error) {
-        // console.log(error);
         setError(error);
       }
     };
+
     fetchData();
-  }, [id]);
+    if (sequence && sequence.length > 0 && !hasFetchedData) {
+      const fetchData = async () => {
+        try {
+          const res = await ApiCall.get(
+            `/sequencestask/get-sequence-task/${id}`
+          );
+          if (res.data.data.length > 0) {
+            setsequencetask(res.data.data);
+          } else {
+            setError("ss");
+          }
+        } catch (error) {
+          setError(error);
+        }
+      };
 
-  const handleBackClick = () => {
-    navigate("/sequence");
-  };
+      fetchData();
 
-  const handleOpenModel = () => {
-    setOpenModel(!open);
-  };
+      // Set hasFetchedData to true to prevent infinite loop
+      setHasFetchedData(true);
+    }
+  }, [id, sequence, hasFetchedData]);
 
   return (
     <div>
@@ -81,7 +105,7 @@ function Detail() {
           isLoading={isSequenceLoading}
           open={openModel}
           setOpen={setOpenModel}
-          data={sequencetask}
+          data={row}
           filter={"add-sequencetask"}
         />
       ) : (

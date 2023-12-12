@@ -74,6 +74,7 @@ export default function Sequence() {
   const { sequence, isSequenceLoading } = useSelector(
     (state) => state.sequenceSlice
   );
+
   const { loginUser } = useSelector((state) => state.userSlice);
   const { permissions: userPermissions } = loginUser.decodedToken;
   const canAddSequence = hasPermission(
@@ -161,8 +162,8 @@ export default function Sequence() {
     dispatch(getSequence());
   }, [dispatch]);
 
-  const handleOpenDetail = (id) => {
-    navigation(`/sequence-detail/${id}`);
+  const handleOpenDetail = (id, row) => {
+    navigation(`/sequence-detail/${id}`, { state: { row } });
   };
 
   return (
@@ -280,7 +281,7 @@ export default function Sequence() {
                         page * rowsPerPage + rowsPerPage
                       )
                       .map((row) => {
-                        const { id, sequence_name, Job } = row;
+                        const { id, sequence_name, Job, jobid } = row;
                         return (
                           <TableRow hover key={id} tabIndex={-1}>
                             <TableCell
@@ -324,7 +325,11 @@ export default function Sequence() {
                                 </MenuItem>
                               )}
                               {canEditSequence && (
-                                <MenuItem onClick={() => handleOpenDetail(id)}>
+                                <MenuItem
+                                  onClick={() =>
+                                    handleOpenDetail(id, row, jobid)
+                                  }
+                                >
                                   <Iconify icon={"eva:info-outline"} />
                                 </MenuItem>
                               )}

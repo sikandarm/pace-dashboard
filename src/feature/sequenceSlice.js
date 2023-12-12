@@ -77,14 +77,14 @@ export const createSequencetask = createAsyncThunk(
       const fData = new FormData();
       fData.append("sequence_id", data.sequence_id);
       fData.append("task_id", data.task_id);
-
       const res = await ApiCall.post(
         "/sequencestask/updatesequencetask",
         fData
       );
 
       if (res.data.success) {
-        return res.data.data;
+        // console.log("REsponse", res.data);
+        return res.data;
       } else {
         return ThunkApi.rejectWithValue(res.data.message);
       }
@@ -153,8 +153,8 @@ export const sequenceSlice = createSlice({
       state.isSequenceLoading = true;
     });
     builder.addCase(createSequencetask.fulfilled, (state, action) => {
-      console.log(action.payload, ")))))))");
-      if (action.payload) state.sequence.unshift(action.payload);
+      // console.log(action.payload, "payload");
+      if (action.payload) state.sequence.unshift(action.payload.data);
       state.isSequenceLoading = false;
     });
     builder.addCase(createSequencetask.rejected, (state, action) => {

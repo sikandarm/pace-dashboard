@@ -13,6 +13,7 @@ import Inventory from "./pages/Inventory/Inventory";
 import Tasks from "./pages/Tasks/Tasks";
 import Jobs from "./pages/Jobs/Jobs";
 import DetailJob from "./pages/Jobs/Detail.jsx";
+import Fabricateditemdetails from "./pages/Jobs/Fabricated_item_details.jsx";
 import Roles from "./pages/Roles/Roles";
 import Users from "./pages/Users/Users";
 import Permissions from "./pages/Permissions/Permissions";
@@ -49,6 +50,10 @@ export default function Router() {
         { path: "jobs", element: <Jobs /> },
         { path: "/detail-Job/:id", element: <DetailJob /> },
         { path: "/create-items/:id", element: <CreateFabrecatedItems /> },
+        {
+          path: "/fabricated-item-details/:uniqueName",
+          element: <Fabricateditemdetails />,
+        },
         { path: "/update-items/:id", element: <CreateFabrecatedItems /> },
         { path: "contacts", element: <Contacts /> },
         { path: "vendors", element: <Vendor /> },
