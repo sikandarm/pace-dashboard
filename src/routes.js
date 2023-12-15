@@ -25,6 +25,7 @@ import PurchaseOrderItems from "./pages/PurchaseOrder/PurchaseOrderItems";
 import Company from "./pages/Company/company.jsx";
 import Vendor from "./pages/vendor/vendor.jsx";
 import CreateFabrecatedItems from "./pages/Jobs/CreateFabrecatedItems.jsx";
+import UpdateFabrecatedItems from "./pages/Jobs/UpdateFabrecatedItem.jsx";
 import Sequence from "./pages/Sequence/Sequence.jsx";
 import SequenceDetail from "./pages/Sequence/Detail.jsx";
 // ----------------------------------------------------------------------
@@ -54,7 +55,7 @@ export default function Router() {
           path: "/fabricated-item-details/:uniqueName",
           element: <Fabricateditemdetails />,
         },
-        { path: "/update-items/:id", element: <CreateFabrecatedItems /> },
+        { path: "/update-items/:id", element: <UpdateFabrecatedItems /> },
         { path: "contacts", element: <Contacts /> },
         { path: "vendors", element: <Vendor /> },
         { path: "purchaseorder", element: <PurchaseOrder /> },

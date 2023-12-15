@@ -36,10 +36,6 @@ function Detail() {
     userPermissions,
     PERMISSIONS.Add_FabricatedItems
   );
-  const canUpdateFabricatedItems = hasPermission(
-    userPermissions,
-    PERMISSIONS.Update_FabricatedItems
-  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,8 +96,10 @@ function Detail() {
     navigate(`/create-items/${id}`);
   };
 
-  const handleDetails = (uniqueName) => {
-    navigate(`/fabricated-item-details/${uniqueName}`);
+  const handleDetails = (uniqueName, correspondingItem, id) => {
+    navigate(`/fabricated-item-details/${uniqueName}`, {
+      state: { correspondingItem, id },
+    });
   };
 
   return (
@@ -166,24 +164,37 @@ function Detail() {
                 <TableBody>
                   {fabricateditems &&
                     [...new Set(fabricateditems.map((item) => item.name))].map(
-                      (uniqueName, index) => (
-                        <React.Fragment key={index}>
-                          <TableRow>
-                            <TableCell>{uniqueName}</TableCell>
-                            <TableCell
-                              align="right"
-                              style={{ display: "flex" }}
-                            >
-                              <MenuItem
-                                sx={{ color: "error.main" }}
-                                onClick={() => handleDetails(uniqueName)}
+                      (uniqueName, index) => {
+                        // Find the first item with the matching name to get its id
+                        const correspondingItem = fabricateditems.find(
+                          (item) => item.name === uniqueName
+                        );
+
+                        return (
+                          <React.Fragment key={index}>
+                            <TableRow>
+                              <TableCell>{uniqueName}</TableCell>
+                              <TableCell
+                                align="right"
+                                style={{ display: "flex" }}
                               >
-                                <Iconify icon={"eva:info-outline"} />
-                              </MenuItem>
-                            </TableCell>
-                          </TableRow>
-                        </React.Fragment>
-                      )
+                                <MenuItem
+                                  sx={{ color: "error.main" }}
+                                  onClick={() =>
+                                    handleDetails(
+                                      uniqueName,
+                                      correspondingItem.id,
+                                      id
+                                    )
+                                  }
+                                >
+                                  <Iconify icon={"eva:info-outline"} />
+                                </MenuItem>
+                              </TableCell>
+                            </TableRow>
+                          </React.Fragment>
+                        );
+                      }
                     )}
                 </TableBody>
               </Table>

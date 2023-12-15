@@ -1,8 +1,8 @@
-// FabricatedItemDetail.js
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { HomeRounded } from "@material-ui/icons";
+import Iconify from "../../components/iconify";
 
 import {
   Container,
@@ -18,19 +18,28 @@ import {
   TableCell,
   TableBody,
   MenuItem,
-  Card,
+  // Card,
 } from "@mui/material";
-import Iconify from "@iconify/react";
 
 import ApiCall from "../../utils/apicall";
+import { useSelector } from "react-redux";
+import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 
 const FabricatedItemDetail = () => {
   const { uniqueName } = useParams();
-  console.log(uniqueName, "+_+_+_+_+");
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const { state } = location;
+  // console.log(state, "STATE");
   const [fabricatedItems, setFabricatedItems] = useState([]);
+  // console.log(fabricatedItems);
   // const [poItems, setPoItems] = useState([]);
+  const { loginUser } = useSelector((state) => state.userSlice);
+  const { permissions: userPermissions } = loginUser.decodedToken;
+  const canUpdateFabricatedItems = hasPermission(
+    userPermissions,
+    PERMISSIONS.Update_FabricatedItems
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +48,7 @@ const FabricatedItemDetail = () => {
         const fabricatedItemsResponse = await ApiCall.get(
           `/fabricated-items/get-items-byname/${uniqueName}`
         );
-        console.log(fabricatedItemsResponse, "+_+_+_");
+        // console.log(fabricatedItemsResponse, "+_+_+_");
         setFabricatedItems(fabricatedItemsResponse.data.data);
 
         // Fetch PO items associated with the fabricated item
@@ -56,11 +65,11 @@ const FabricatedItemDetail = () => {
     fetchData();
   }, [uniqueName]);
 
-  // const handleBackClick = () => {
-  //   navigate("/fabricated-items"); // Adjust the URL as needed
-  // };
-  const handleOpenUpdate = (fabricateditems) => {
-    navigate(`/update-items/${id}`, { state: { fabricateditems } });
+  const handleBackClick = (id) => {
+    navigate(`/detail-Job/${id}`);
+  };
+  const handleOpenUpdate = (id, item) => {
+    navigate(`/update-items/${id}`, { state: { item } });
   };
   return (
     <div>
@@ -94,6 +103,7 @@ const FabricatedItemDetail = () => {
                     <TableCell>Quantity</TableCell>
                     <TableCell>PoItems</TableCell>
                     <TableCell></TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -102,14 +112,24 @@ const FabricatedItemDetail = () => {
                       <TableCell>{item.name}</TableCell>
                       <TableCell>{item.quantity}</TableCell>
                       <TableCell>{item.POItemName}</TableCell>
-                      <TableCell align="right" style={{ display: "flex" }}>
+                      <TableCell>
+                        {canUpdateFabricatedItems && (
+                          <MenuItem
+                            sx={{ color: "error.main" }}
+                            onClick={() => handleOpenUpdate(item.id, item)}
+                          >
+                            <Iconify icon={"eva:info-outline"} />
+                          </MenuItem>
+                        )}
+                      </TableCell>
+                      {/* <TableCell align="right" style={{ display: "flex" }}>
                         <MenuItem
                           sx={{ color: "error.main" }}
                           onClick={() => handleOpenUpdate(item)}
                         >
                           <Iconify icon={"eva:info-outline"} />
                         </MenuItem>
-                      </TableCell>
+                      </TableCell> */}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -120,14 +140,14 @@ const FabricatedItemDetail = () => {
           )}
         </Paper>
 
-        {/* <Button
+        <Button
           variant="contained"
           color="primary"
           style={{ marginTop: "10px" }}
-          onClick={handleBackClick}
+          onClick={() => handleBackClick(state.id)}
         >
           Back
-        </Button> */}
+        </Button>
       </Container>
     </div>
   );

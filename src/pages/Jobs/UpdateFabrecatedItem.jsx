@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { showErrorToast, showSuccessToast } from "../../utils/Toast";
 import {
@@ -20,12 +20,27 @@ import { HomeRounded } from "@material-ui/icons";
 import { Add as AddIcon, Remove as RemoveIcon } from "@material-ui/icons";
 import ApiCall from "../../utils/apicall";
 
-const CreateFabrecatedItems = () => {
+const UpdateFabrecatedItem = () => {
   const [fields, setFields] = useState([{ quantity: "", poitems_id: "" }]);
   const [endProduct, setEndProduct] = useState("");
   const [poItems, setPoItems] = useState([]);
   const { id } = useParams();
+  console.log(id, "JObID");
   const navigate = useNavigate();
+  const location = useLocation();
+  const { item } = location.state || {};
+
+  // console.log(item, ")()()()()");
+  const isUpdateMode = Boolean(item);
+
+  useEffect(() => {
+    if (isUpdateMode) {
+      setEndProduct(item?.name || "");
+      setFields([
+        { quantity: item?.quantity || "", poitems_id: item?.poitems_id || "" },
+      ]);
+    }
+  }, [isUpdateMode, item]);
 
   const validateDuplicates = (items) => {
     const uniqueItems = new Set();
@@ -73,35 +88,30 @@ const CreateFabrecatedItems = () => {
     }
 
     try {
-      // Handle create logic here
-      const promises = fields.map(async (items) => {
-        return ApiCall.post("/fabricated-items/create-fabricated-item", {
+      const createOrUpdateItems = async () => {
+        const payload = {
           name: endProduct,
-          job_Id: id,
-          quantity: items.quantity,
-          poitems_id: items.poitems_id,
-        });
-      });
+          items: fields,
+          job_Id: item.jobid,
+          quantity: fields[0]?.quantity,
+          poitems_id: fields[0]?.poitems_id,
+        };
 
-      const results = await Promise.allSettled(promises);
-
-      results.forEach((result, index) => {
-        if (result.status === "fulfilled") {
-          // console.log(`Request ${index + 1}:`, "fulfilled", result.value);
-          navigate(`/detail-Job/${id}`);
-
-          showSuccessToast("Items created successfully");
-        } else {
-          // console.error(`Request ${index + 1}:`, "rejected", result.reason);
-          if (result.reason.response?.data?.message === "Item already exists") {
-            showErrorToast(`Item already exists for some of the items.`);
-          } else {
-            showErrorToast(
-              result.reason.response?.data?.data || "An error occurred"
-            );
-          }
+        if (isUpdateMode) {
+          // Handle update logic here
+          await ApiCall.put(
+            `/fabricated-items/update-fabricated-item/${item?.id}`,
+            payload
+          );
         }
-      });
+
+        if (isUpdateMode) {
+          showSuccessToast("Items updated successfully");
+          navigate(`/detail-Job/${item.jobid}`);
+        }
+      };
+
+      createOrUpdateItems();
     } catch (error) {
       console.error("An error occurred:", error);
       showErrorToast(error.response?.data?.data || "An error occurred");
@@ -131,7 +141,7 @@ const CreateFabrecatedItems = () => {
     const fetchItems = async () => {
       try {
         const res = await ApiCall.get(
-          `/fabricated-items/get-poitem-perjob/${id}`
+          `/fabricated-items/get-poitem-perjob/${item.jobid}`
         );
         setPoItems(res.data.data);
       } catch (error) {
@@ -140,7 +150,7 @@ const CreateFabrecatedItems = () => {
     };
 
     fetchItems();
-  }, [id]);
+  }, [item.jobid]);
 
   return (
     <>
@@ -159,7 +169,9 @@ const CreateFabrecatedItems = () => {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <HomeRounded color="inherit" />
                 <Typography variant="body1" color="textPrimary">
-                  Create Fabricated Items
+                  {isUpdateMode
+                    ? "/ Update Fabricated Items"
+                    : "/ Create Fabricated Items"}
                 </Typography>
               </Stack>
             </Breadcrumbs>
@@ -226,7 +238,7 @@ const CreateFabrecatedItems = () => {
                     >
                       {poItems.length === 0 && (
                         <MenuItem disabled value="">
-                          No Task Found
+                          No Item Found
                         </MenuItem>
                       )}
                       {poItems.map((dataItem) => (
@@ -240,7 +252,7 @@ const CreateFabrecatedItems = () => {
               </Grid>
             ))}
             <Button type="submit" variant="contained" color="primary">
-              Create
+              {isUpdateMode ? "Update" : "Create"}
             </Button>
           </form>
         </container>
@@ -249,4 +261,4 @@ const CreateFabrecatedItems = () => {
   );
 };
 
-export default CreateFabrecatedItems;
+export default UpdateFabrecatedItem;
