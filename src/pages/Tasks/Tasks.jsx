@@ -22,7 +22,9 @@ import {
   TablePagination,
   Breadcrumbs,
   Modal,
+  IconButton,
 } from "@mui/material";
+
 // components
 import Label from "../../components/label";
 import Iconify from "../../components/iconify";
@@ -86,6 +88,7 @@ export default function Tasks(props) {
   const [conformation, setConformation] = useState(false);
   const [selectedRow, setSelectedRow] = useState("");
   const [openModel, setOpenModel] = useState(false);
+  const [openCallModel, setOpenCallModel] = useState(false);
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const [deleteId, setDeleteId] = useState("");
   const { tasks, isTaskLoading, rejectionReasons } = useSelector(
@@ -100,6 +103,15 @@ export default function Tasks(props) {
   const canDeleteTask = hasPermission(userPermissions, PERMISSIONS.DELETE_TASK);
   const canExportTask = hasPermission(userPermissions, PERMISSIONS.EXPORT_TASK);
   const canViewTaskList = hasPermission(userPermissions, PERMISSIONS.VIEW_TASK);
+  const canViewWhiteboard = hasPermission(
+    userPermissions,
+    PERMISSIONS.COLLABORATE_ON_MICROSOFT_WHITEBOARD
+  );
+  const canDownloadDiagram = hasPermission(
+    userPermissions,
+    PERMISSIONS.Download_Diagram
+  );
+  const canMakeCall = hasPermission(userPermissions, PERMISSIONS.Make_Call);
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
 
@@ -231,6 +243,31 @@ export default function Tasks(props) {
     dispatch(getUsers());
     dispatch(getRejectionReasons());
   }, [dispatch]);
+
+  const handleDownload = async (image) => {
+    try {
+      const response = await fetch(image);
+      const blob = await response.blob();
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = "image.jpeg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading image:", error);
+    }
+  };
+  const handleCollaborate = () => {
+    const whiteboardUrl =
+      "https://apps.apple.com/us/app/microsoft-whiteboard/id1352499399";
+    window.open(whiteboardUrl, "_blank");
+  };
+
+  const handleOpenCallModel = () => {
+    setOpenCallModel(!open);
+  };
   return (
     <>
       <Helmet>
@@ -367,7 +404,7 @@ export default function Tasks(props) {
                         } = row;
                         return (
                           <TableRow hover key={id} tabIndex={-1}>
-                            <TableCell align="left">
+                            {/* <TableCell align="left">
                               {image ? (
                                 <img
                                   alt="task"
@@ -378,7 +415,78 @@ export default function Tasks(props) {
                               ) : (
                                 "_"
                               )}
+                            </TableCell> */}
+                            <TableCell align="left">
+                              {image ? (
+                                <>
+                                  <img
+                                    alt="task"
+                                    style={{ width: "50px", height: "40px" }}
+                                    src={image}
+                                    onClick={() => openFullscreen(image)}
+                                  />
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      marginLeft: "-15px",
+                                      marginTop: "5px",
+                                    }}
+                                  >
+                                    {canMakeCall && (
+                                      <IconButton
+                                        onClick={() => handleOpenCallModel()}
+                                      >
+                                        <Iconify
+                                          icon="material-symbols:call"
+                                          style={{
+                                            height: "1rem",
+                                            width: "1rem",
+                                          }}
+                                        />
+                                      </IconButton>
+                                    )}
+                                    {openCallModel ? (
+                                      <CModel
+                                        open={openCallModel}
+                                        setOpen={setOpenCallModel}
+                                        filter={"call-list"}
+                                      />
+                                    ) : (
+                                      ""
+                                    )}
+                                    {canDownloadDiagram && (
+                                      <IconButton
+                                        onClick={() => handleDownload(image)}
+                                      >
+                                        <Iconify
+                                          icon="material-symbols:download"
+                                          style={{
+                                            height: "1rem",
+                                            width: "1rem",
+                                          }}
+                                        />
+                                      </IconButton>
+                                    )}
+                                    {canViewWhiteboard && (
+                                      <IconButton
+                                        onClick={() => handleCollaborate()}
+                                      >
+                                        <Iconify
+                                          icon="carbon:collaborate"
+                                          style={{
+                                            height: "1rem",
+                                            width: "1rem",
+                                          }}
+                                        />
+                                      </IconButton>
+                                    )}
+                                  </div>
+                                </>
+                              ) : (
+                                "_"
+                              )}
                             </TableCell>
+
                             <TableCell
                               component="th"
                               scope="row"
@@ -516,12 +624,12 @@ export default function Tasks(props) {
               fontWeight: "bold",
             }}
           >
-            X
+            <Iconify icon="mingcute:close-fill" />
           </button>
 
           <img
             alt="fullscreen"
-            style={{ width: "100%", height: "auto", marginTop: "30px" }}
+            style={{ width: "100%", height: "600px", marginTop: "25px" }}
             src={fullscreenImage}
           />
         </div>

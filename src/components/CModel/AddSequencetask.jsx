@@ -20,7 +20,7 @@ const AddSequencetask = (props) => {
   const [taskid, settaskid] = useState("");
   const [task, settask] = useState([]);
   const [error, setError] = useState(null);
-
+  console.log(error);
   useEffect(() => {
     const getTask = async () => {
       try {
@@ -28,7 +28,7 @@ const AddSequencetask = (props) => {
           `/sequencestask/indenpendent-task/${props.data.jobid}`
         );
         settask(res.data.data);
-      } catch (error) {
+      } catch (err) {
         // console.error("Error fetching tasks:", error);
         setError("Error fetching tasks. Please try again.");
       }

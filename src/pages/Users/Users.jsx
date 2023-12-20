@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 // @mui
 import {
   Table,
@@ -17,20 +17,20 @@ import {
   TableHead,
   Container,
   Card,
-} from '@mui/material';
+} from "@mui/material";
 // components
-import Label from '../../components/label';
-import Iconify from '../../components/iconify';
-import { deleteUser, getUsers } from '../../feature/userSlice';
-import { useSelector } from 'react-redux';
-import { getRoles } from '../../feature/roleSlice';
-import { HomeRounded } from '@material-ui/icons';
-import { hasPermission, PERMISSIONS } from '../../utils/hasPermission';
-import UserModal from '../../components/Modals/UserModal';
-import ConfirmationModal from '../../components/Modals/ConfirmationModal';
-import { showSuccessToast } from '../../utils/Toast';
-import SkeletonTable from '../../components/SkeletonTable';
-import SearchInput from '../../components/Search';
+import Label from "../../components/label";
+import Iconify from "../../components/iconify";
+import { deleteUser, getUsers } from "../../feature/userSlice";
+import { useSelector } from "react-redux";
+import { getRoles } from "../../feature/roleSlice";
+import { HomeRounded } from "@material-ui/icons";
+import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
+import UserModal from "../../components/Modals/UserModal";
+import ConfirmationModal from "../../components/Modals/ConfirmationModal";
+import { showSuccessToast } from "../../utils/Toast";
+import SkeletonTable from "../../components/SkeletonTable";
+import SearchInput from "../../components/Search";
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const Users = () => {
   const { usersList, isLoading } = useSelector((state) => state.userSlice);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const { permissions: userPermissions } = loginUser.decodedToken;
   const canAddUSer = hasPermission(userPermissions, PERMISSIONS.ADD_USER);
   const canEditUSer = hasPermission(userPermissions, PERMISSIONS.EDIT_USER);
@@ -79,7 +79,7 @@ const Users = () => {
   const handleDeleteUser = (userId) => {
     dispatch(deleteUser(userId));
     closeDeleteModal();
-    showSuccessToast('User deleted succesfully');
+    showSuccessToast("User deleted succesfully");
   };
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -90,30 +90,46 @@ const Users = () => {
     dispatch(getRoles());
   }, [dispatch]);
 
-  const filteredUsers = usersList.filter((user) => user.firstName.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredUsers = usersList.filter((user) =>
+    user.firstName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const userRows = filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
-    <TableRow key={user.id}>
-      <TableCell>{user.firstName}</TableCell>
-      <TableCell>
-        <Label color={user.isActive === true ? 'success' : 'error'}>{user.isActive ? 'Active' : 'Suspended'}</Label>
-      </TableCell>
-      <TableCell>{user.phone}</TableCell>
-      <TableCell>{user.email}</TableCell>
-      <TableCell style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {canEditUSer && (
-          <MenuItem onClick={() => openUserModal(user)}>
-            <Iconify icon={'eva:edit-fill'} />
-          </MenuItem>
-        )}
-        {canDeleteUSer && (
-          <MenuItem sx={{ color: 'error.main' }} onClick={() => openDeleteModal(user)}>
-            <Iconify icon={'eva:trash-2-outline'} />
-          </MenuItem>
-        )}
-      </TableCell>
-    </TableRow>
-  ));
+  const userRows = filteredUsers
+    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    .map((user) => (
+      <TableRow key={user.id}>
+        <TableCell>{user.firstName}</TableCell>
+        <TableCell>
+          <Label color={user.isActive === true ? "success" : "error"}>
+            {user.isActive ? "Active" : "Suspended"}
+          </Label>
+        </TableCell>
+        <TableCell>{user.phone}</TableCell>
+        <TableCell>{user.email}</TableCell>
+        <TableCell>{user.ratePerHour}</TableCell>
+        <TableCell
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {canEditUSer && (
+            <MenuItem onClick={() => openUserModal(user)}>
+              <Iconify icon={"eva:edit-fill"} />
+            </MenuItem>
+          )}
+          {canDeleteUSer && (
+            <MenuItem
+              sx={{ color: "error.main" }}
+              onClick={() => openDeleteModal(user)}
+            >
+              <Iconify icon={"eva:trash-2-outline"} />
+            </MenuItem>
+          )}
+        </TableCell>
+      </TableRow>
+    ));
 
   return (
     <>
@@ -123,10 +139,19 @@ const Users = () => {
         onConfirm={() => handleDeleteUser(selectedUser.id)}
       />
       {isUserModalOpen && (
-        <UserModal user={selectedUser ? selectedUser : null} isOpen={isUserModalOpen} onClose={closeUserModal} />
+        <UserModal
+          user={selectedUser ? selectedUser : null}
+          isOpen={isUserModalOpen}
+          onClose={closeUserModal}
+        />
       )}
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={5}
+        >
           <Breadcrumbs aria-label="breadcrumb">
             <Stack direction="row" alignItems="center" spacing={1}>
               <HomeRounded color="inherit" />
@@ -136,14 +161,22 @@ const Users = () => {
             </Stack>
           </Breadcrumbs>
           {canAddUSer && (
-            <Button onClick={() => openUserModal()} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button
+              onClick={() => openUserModal()}
+              variant="contained"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+            >
               New User
             </Button>
           )}
         </Stack>
         {canViewUserList && (
           <Card>
-            <SearchInput value={searchTerm} onChange={handleSearchChange} placeholder="Search user..." />
+            <SearchInput
+              value={searchTerm}
+              onChange={handleSearchChange}
+              placeholder="Search user..."
+            />
             <TableContainer component={Paper}>
               <Table>
                 <TableHead>
@@ -152,12 +185,15 @@ const Users = () => {
                     <TableCell>Status</TableCell>
                     <TableCell>Phone</TableCell>
                     <TableCell>Email</TableCell>
+                    <TableCell>RatePerHour</TableCell>
                     <TableCell align="center">Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {isLoading ? (
-                    Array.from({ length: rowsPerPage }, (_, index) => <SkeletonTable key={index} numColumns={5} />)
+                    Array.from({ length: rowsPerPage }, (_, index) => (
+                      <SkeletonTable key={index} numColumns={5} />
+                    ))
                   ) : userRows.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={5} align="center">

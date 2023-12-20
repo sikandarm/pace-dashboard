@@ -21,6 +21,7 @@ import {
   TableRow,
   TableBody,
   TableHead,
+  TablePagination,
 } from "@mui/material";
 import { useState } from "react";
 
@@ -48,6 +49,8 @@ function Detail() {
   );
   const location = useLocation();
   const { row } = location.state || {};
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleBackClick = () => {
     navigate("/sequence");
@@ -62,7 +65,7 @@ function Detail() {
       try {
         const res = await ApiCall.get(`/sequencestask/get-sequence-task/${id}`);
         if (res.data.data.length > 0) {
-          setsequencetask(res.data.data);
+          setsequencetask(res.data.data || []);
         } else {
           setError("ss");
         }
@@ -79,7 +82,7 @@ function Detail() {
             `/sequencestask/get-sequence-task/${id}`
           );
           if (res.data.data.length > 0) {
-            setsequencetask(res.data.data);
+            setsequencetask(res.data.data || []);
           } else {
             setError("ss");
           }
@@ -94,6 +97,14 @@ function Detail() {
       setHasFetchedData(true);
     }
   }, [id, sequence, hasFetchedData]);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <div>
@@ -146,26 +157,42 @@ function Detail() {
                 Sequence Task Not Found!
               </Typography>
             ) : (
-              <TableContainer component={Paper}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Sequence Name</TableCell>
-                      <TableCell>Task Pmk#</TableCell>
-                      <TableCell></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {sequencetask &&
-                      sequencetask.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{item.SequenceName}</TableCell>
-                          <TableCell>{item.TaskName}</TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Sequence Name</TableCell>
+                        <TableCell>Task Pmk#</TableCell>
+                        <TableCell></TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {sequencetask &&
+                        sequencetask
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
+                          .map((item, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{item.SequenceName}</TableCell>
+                              <TableCell>{item.TaskName}</TableCell>
+                            </TableRow>
+                          ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25]}
+                  component="div"
+                  count={sequencetask.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  onPageChange={handleChangePage}
+                  onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+              </>
             )}
           </Paper>
 

@@ -16,6 +16,7 @@ import EditTask from "./EditTask";
 import ConformationModel from "./ConformationModel";
 import AddSequence from "./AddSequence";
 import EditSequence from "./EditSequence";
+import Numberlist from "./CallList";
 import AddSequenceTask from "./AddSequencetask";
 
 export default function CModel(props) {
@@ -25,6 +26,7 @@ export default function CModel(props) {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width:
+      props.filter === "call-list" ||
       props.filter === "update-inventory" ||
       props.filter === "add-inventory" ||
       props.filter === "add-task" ||
@@ -147,6 +149,8 @@ export default function CModel(props) {
               isLoading={props.isLoading}
               // reasons={props.reasons}
             />
+          ) : props.filter === "call-list" ? (
+            <Numberlist setOpen={props.setOpen} />
           ) : (
             ""
           )}

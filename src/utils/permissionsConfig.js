@@ -52,6 +52,9 @@ const PERMISSIONS = {
   DELETE_SEQUENCE: "delete_sequence",
   VIEW_SEQUENCE: "view_sequence",
   EDIT_SEQUENCE: "edit_sequence",
+  COLLABORATE_ON_MICROSOFT_WHITEBOARD: "collaborate_on_microsoft_whiteboard",
+  Make_Call: "make_call",
+  Download_Diagram: "download_diagram",
 };
 
 export default PERMISSIONS;

@@ -1,25 +1,36 @@
-import { useState } from 'react';
-import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Switch, TextField } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { createUser, updateUser } from '../../feature/userSlice';
-import { showErrorToast, showSuccessToast } from '../../utils/Toast';
-import { validateInput } from '../../utils/validateInput';
+import { useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Modal,
+  Select,
+  Switch,
+  TextField,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { createUser, updateUser } from "../../feature/userSlice";
+import { showErrorToast, showSuccessToast } from "../../utils/Toast";
+import { validateInput } from "../../utils/validateInput";
 
 const UserModal = (props) => {
   const { user } = props;
   const dispatch = useDispatch();
 
   const [data, setData] = useState({
-    firstName: user ? user.firstName : '',
-    lastName: user ? user.lastName : '',
-    email: user ? user.email : '',
-    password: user ? user.password : '',
+    firstName: user ? user.firstName : "",
+    lastName: user ? user.lastName : "",
+    email: user ? user.email : "",
+    password: user ? user.password : "",
+    ratePerHour: user ? user.ratePerHour : "",
   });
 
-  const [selectedRole = ''] = user?.roles || [];
+  const [selectedRole = ""] = user?.roles || [];
 
-  const [role, setRole] = useState(user ? selectedRole?.id : '');
-  const [phone, setPhone] = useState(user ? user.phone : '');
+  const [role, setRole] = useState(user ? selectedRole?.id : "");
+  const [phone, setPhone] = useState(user ? user.phone : "");
   const [isActive, setIsActive] = useState(user ? user.isActive : false);
 
   const { roles } = useSelector((state) => state.roleSlice);
@@ -33,16 +44,16 @@ const UserModal = (props) => {
   };
 
   const formatPhoneNumber = (input) => {
-    const numbersOnly = input.replace(/\D/g, '');
-    let formattedValue = '';
+    const numbersOnly = input.replace(/\D/g, "");
+    let formattedValue = "";
     if (numbersOnly.length > 0) {
       formattedValue += numbersOnly.slice(0, 3);
     }
     if (numbersOnly.length >= 4) {
-      formattedValue += `-${numbersOnly.slice(3, 6)}`;
+      formattedValue += `${numbersOnly.slice(3, 6)}`;
     }
     if (numbersOnly.length >= 7) {
-      formattedValue += `-${numbersOnly.slice(6, 10)}`;
+      formattedValue += `${numbersOnly.slice(6, 11)}`;
     }
     return formattedValue;
   };
@@ -55,19 +66,19 @@ const UserModal = (props) => {
 
   const handleSubmit = () => {
     //Validate Role
-    if (!validateInput('role', role)) {
+    if (!validateInput("role", role)) {
       return;
     }
 
     if (!user) {
-      for (const field of ['firstName', 'lastName', 'email', 'password']) {
+      for (const field of ["firstName", "lastName", "email", "password"]) {
         if (!validateInput(field, data[field])) {
           return;
         }
       }
     } else {
       // Validate User fields except password for Edit User mode
-      for (const field of ['firstName', 'lastName', 'email']) {
+      for (const field of ["firstName", "lastName", "email"]) {
         if (!validateInput(field, data[field])) {
           return;
         }
@@ -76,37 +87,47 @@ const UserModal = (props) => {
 
     //Validate Phone number
     if (phone.length > 0) {
-      if (!validateInput('phone', phone)) {
+      if (!validateInput("phone", phone)) {
         return;
       }
     }
 
-    const userData = { ...data, id: user?.id, phone, roleId: role, isActive };
+    const userData = {
+      ...data,
+      id: user?.id,
+      phone,
+      roleId: role,
+      isActive,
+    };
     if (user) {
       dispatch(updateUser(userData)).then((res) => {
-        if (res.type === 'update-users/users/rejected') {
+        if (res.type === "update-users/users/rejected") {
           console.log(res);
           showErrorToast(res.payload);
         }
         if (res && res.payload.id) {
-          showSuccessToast('User Updated Successfully !');
+          showSuccessToast("User Updated Successfully !");
           handleClose();
         }
       });
     } else {
       dispatch(createUser(userData)).then((res) => {
-        if (res.type === 'create-users/users/rejected') {
-          showErrorToast('User Already Exist');
+        if (res.type === "create-users/users/rejected") {
+          showErrorToast("User Already Exist");
         }
         if (res.payload.id) {
-          showSuccessToast('User Created Successfully !');
+          showSuccessToast("User Created Successfully !");
           handleClose();
         }
       });
     }
   };
 
-  const buttonLabel = props.isLoading ? 'Loading...' : user ? 'Update User' : 'Create User';
+  const buttonLabel = props.isLoading
+    ? "Loading..."
+    : user
+    ? "Update User"
+    : "Create User";
 
   const handleClose = () => {
     props.onClose();
@@ -117,19 +138,19 @@ const UserModal = (props) => {
       open={props.isOpen}
       onClose={handleClose}
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <Box
         sx={{
-          backgroundColor: 'white',
+          backgroundColor: "white",
           boxShadow: 24,
           p: 4,
           width: 400, // Adjust the width as needed
-          textAlign: 'center',
-          borderRadius: '20px',
+          textAlign: "center",
+          borderRadius: "20px",
         }}
       >
         <FormControl fullWidth>
@@ -142,7 +163,7 @@ const UserModal = (props) => {
             fullWidth
             margin="dense"
             variant="outlined"
-            sx={{ textAlign: 'left' }}
+            sx={{ textAlign: "left" }}
           >
             {roles.map((role) => (
               <MenuItem key={role.id} value={role.id}>
@@ -164,9 +185,21 @@ const UserModal = (props) => {
             name="lastName"
             label="Last Name"
           />
-          <TextField defaultValue={data.email} margin="dense" onChange={handleInputChange} name="email" label="Email" />
+          <TextField
+            defaultValue={data.email}
+            margin="dense"
+            onChange={handleInputChange}
+            name="email"
+            label="Email"
+          />
           {!user && (
-            <TextField margin="dense" onChange={handleInputChange} name="password" label="Password" type="password" />
+            <TextField
+              margin="dense"
+              onChange={handleInputChange}
+              name="password"
+              label="Password"
+              type="password"
+            />
           )}
           <TextField
             margin="dense"
@@ -182,8 +215,21 @@ const UserModal = (props) => {
               maxLength: 12,
             }}
           />
+          <TextField
+            defaultValue={data.ratePerHour}
+            margin="dense"
+            onChange={handleInputChange}
+            name="ratePerHour"
+            label="RatePerHour"
+          />
           {user && (
-            <span style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginTop: "10px",
+              }}
+            >
               Active
               <Switch
                 label="Active"
@@ -194,7 +240,7 @@ const UserModal = (props) => {
             </span>
           )}
           <Button
-            sx={{ marginTop: '10px', width: '100%' }}
+            sx={{ marginTop: "10px", width: "100%" }}
             disabled={props.isLoading}
             onClick={handleSubmit}
             variant="contained"
@@ -202,7 +248,11 @@ const UserModal = (props) => {
             {buttonLabel}
           </Button>
           {user && (
-            <Button sx={{ marginTop: '10px', width: '100%' }} onClick={handleClose} variant="outlined">
+            <Button
+              sx={{ marginTop: "10px", width: "100%" }}
+              onClick={handleClose}
+              variant="outlined"
+            >
               Cancel
             </Button>
           )}

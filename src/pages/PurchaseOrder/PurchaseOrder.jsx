@@ -80,7 +80,22 @@ export default function PurchaseOrder() {
   };
 
   useEffect(() => {
-    fetchPurchaseOrder();
+    const fetchPurchaseOrders = async () => {
+      try {
+        const response = await ApiCall.get("/purchaseorder");
+        const purchaseOrders = response.data.data.purchaseOrders.filter(
+          (order) => order.deleted_at === null
+        );
+        if (response) {
+          setSearchResults(response.data.data.purchaseOrders);
+          setPurchaseOrders(purchaseOrders);
+        }
+      } catch (error) {
+        // Handle any errors here
+        console.log(error, "err");
+      }
+    };
+    fetchPurchaseOrders();
   }, []);
 
   const handleFilterByName = (event) => {
@@ -90,19 +105,19 @@ export default function PurchaseOrder() {
       handleSearch();
     }
   };
-  const fetchPage = async () => {
-    try {
-      const response = await ApiCall.get("/purchaseorder", {
-        params: {
-          page: page + 1,
-        },
-      });
-      setPurchaseOrders(response.data.data.purchaseOrders);
-    } catch (error) {
-      console.log("err", error);
-    }
-  };
   useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const response = await ApiCall.get("/purchaseorder", {
+          params: {
+            page: page + 1,
+          },
+        });
+        setPurchaseOrders(response.data.data.purchaseOrders);
+      } catch (error) {
+        console.log("err", error);
+      }
+    };
     fetchPage();
   }, [page]);
 
@@ -161,8 +176,18 @@ export default function PurchaseOrder() {
     } catch (error) {}
   };
   useEffect(() => {
-    handleSearch();
-  }, []);
+    const handleSearchs = async () => {
+      try {
+        const response = await ApiCall.get("/purchaseorder", {
+          params: {
+            vendor_name: filterName,
+          },
+        });
+        setSearchResults(response.data.data.purchaseOrders);
+      } catch (error) {}
+    };
+    handleSearchs();
+  }, [filterName]);
 
   return (
     <div>

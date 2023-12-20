@@ -32,7 +32,7 @@ const CreatePurchaseOrderItem = () => {
     try {
       const response = await ApiCall.get("/inventory");
       const data = response.data.data.inventories;
-      setInventoryData(data);
+      setInventoryData(data || []);
     } catch (error) {
       console.error("Error fetching inventory data", error);
     }
@@ -75,10 +75,7 @@ const CreatePurchaseOrderItem = () => {
     const duplicateInventoryIds = validateDuplicates(items);
 
     if (duplicateInventoryIds.length > 0) {
-      toast.error(
-        "Duplicate inventory items",
-        { position: "top-right" }
-      );
+      toast.error("Duplicate inventory items", { position: "top-right" });
       return;
     } else
       try {

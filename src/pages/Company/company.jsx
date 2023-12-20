@@ -91,22 +91,32 @@ const CompanyList = () => {
   };
 
   useEffect(() => {
-    fetchCompanies();
-  }, []);
+    const fetchCompaniess = async () => {
+      try {
+        const response = await ApiCall.get("/company");
+        setCompanies(response.data.data.companies);
+        setSearchResults(response.data.data.companies);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      }
+    };
+    fetchCompaniess();
+  }, [setLoading]);
 
-  const fetchPage = async () => {
-    try {
-      const response = await ApiCall.get("/company", {
-        params: {
-          page: page + 1,
-        },
-      });
-      setCompanies(response.data.data.companies);
-    } catch (error) {
-      console.log("err", error);
-    }
-  };
   useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const response = await ApiCall.get("/company", {
+          params: {
+            page: page + 1,
+          },
+        });
+        setCompanies(response.data.data.companies);
+      } catch (error) {
+        console.log("err", error);
+      }
+    };
     fetchPage();
   }, [page]);
 
@@ -124,10 +134,10 @@ const CompanyList = () => {
 
         if (response.status === 200) {
           fetchCompanies();
-          var updatedCompany = response.data.data.company;
-          var updatedCompanies = companies.map((company) =>
-            company.id === updatedCompany.id ? updatedCompany : company
-          );
+          // var updatedCompany = response.data.data.company;
+          // var updatedCompanies = companies.map((company) =>
+          //   company.id === updatedCompany.id ? updatedCompany : company
+          // );
           //   setCompanies(updatedCompanies);
           // window.location.reload();
           //console.log(updatedCompanies, "11111");
@@ -246,8 +256,18 @@ const CompanyList = () => {
     } catch (error) {}
   };
   useEffect(() => {
-    handleSearch();
-  }, []);
+    const handleSearchs = async () => {
+      try {
+        const response = await ApiCall.get("/company", {
+          params: {
+            name: filterName,
+          },
+        });
+        setSearchResults(response.data.data.companies);
+      } catch (error) {}
+    };
+    handleSearchs();
+  }, [filterName]);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searchResults.length) : 0;

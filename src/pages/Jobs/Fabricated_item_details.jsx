@@ -118,7 +118,7 @@ const FabricatedItemDetail = () => {
                             sx={{ color: "error.main" }}
                             onClick={() => handleOpenUpdate(item.id, item)}
                           >
-                            <Iconify icon={"eva:info-outline"} />
+                            <Iconify icon={"eva:edit-fill"} />
                           </MenuItem>
                         )}
                       </TableCell>

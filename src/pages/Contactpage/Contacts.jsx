@@ -75,7 +75,16 @@ export default function Contacts() {
     }
   };
   useEffect(() => {
-    fetchContacts();
+    const fetchContactss = async () => {
+      try {
+        const response = await ApiCall.get("/contact");
+        dispatch(getContacts(response.data.data.contacts));
+        setSearchResults(response.data.data.contacts);
+      } catch (error) {
+        // Handle error
+      }
+    };
+    fetchContactss();
   }, [dispatch]);
 
   const handleRequestSort = (event, property) => {
@@ -92,21 +101,21 @@ export default function Contacts() {
     setSelected([]);
   };
 
-  const fetchPage = async () => {
-    try {
-      const response = await ApiCall.get("/contact", {
-        params: {
-          page: page + 1,
-        },
-      });
-      contacts(response.data.data);
-    } catch (error) {
-      // Handle error
-    }
-  };
   useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const response = await ApiCall.get("/contact", {
+          params: {
+            page: page + 1,
+          },
+        });
+        contacts(response.data.data);
+      } catch (error) {
+        // Handle error
+      }
+    };
     fetchPage();
-  }, [page]);
+  }, [page, contacts]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -169,7 +178,7 @@ export default function Contacts() {
         const response = await ApiCall.post("/contact", newContactData);
 
         if (response.status === 201) {
-          const newContact = response.data;
+          //  const newContact = response.data;
           setFormErrors("");
           handleClose();
           // window.location.reload();
@@ -194,10 +203,10 @@ export default function Contacts() {
         );
 
         if (response.status === 200) {
-          const updatedContact = response.data;
-          const updatedContacts = contacts.map((contact) =>
-            contact.id === updatedContact.id ? updatedContact : contact
-          );
+          // const updatedContact = response.data;
+          // const updatedContacts = contacts.map((contact) =>
+          //   contact.id === updatedContact.id ? updatedContact : contact
+          // );
           handleClose();
           fetchContacts();
           setOpenUpdateModel(false);
@@ -233,8 +242,18 @@ export default function Contacts() {
     } catch (error) {}
   };
   useEffect(() => {
-    handleSearch();
-  }, []);
+    const handleSearchs = async () => {
+      try {
+        const response = await ApiCall.get("/contact", {
+          params: {
+            firstName: filterName,
+          },
+        });
+        setSearchResults(response.data.data.contacts);
+      } catch (error) {}
+    };
+    handleSearchs();
+  }, [filterName]);
 
   return (
     <>

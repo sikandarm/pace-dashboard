@@ -43,7 +43,7 @@ export const validateInput = (name, value) => {
       }
       break;
     case "phone":
-      if (value.length < 12) {
+      if (value.length < 11) {
         showErrorToast("Phone number must be valid");
         return false;
       }

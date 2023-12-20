@@ -191,26 +191,36 @@ const Vendor = () => {
     } catch (error) {}
   };
   useEffect(() => {
+    const handleSearch = async () => {
+      try {
+        const response = await ApiCall.get("/vendor", {
+          params: {
+            vendor_name: filterName,
+          },
+        });
+        setSearchResults(response.data.data.vendors);
+      } catch (error) {}
+    };
     handleSearch();
-  }, []);
+  }, [filterName]);
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searchResults.length) : 0;
   const isNotFound = !searchResults.length && !!filterName;
 
-  const fetchPage = async () => {
-    try {
-      const response = await ApiCall.get("/vendor", {
-        params: {
-          page: page + 1,
-        },
-      });
-      setVendors(response.data.data.vendors);
-    } catch (error) {
-      console.log("err", error);
-    }
-  };
   useEffect(() => {
+    const fetchPage = async () => {
+      try {
+        const response = await ApiCall.get("/vendor", {
+          params: {
+            page: page + 1,
+          },
+        });
+        setVendors(response.data.data.vendors);
+      } catch (error) {
+        console.log("err", error);
+      }
+    };
     fetchPage();
   }, [page]);
 

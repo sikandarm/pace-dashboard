@@ -32,6 +32,7 @@ export const validateCompanyForm = (formData) => {
   } else if (!phoneRegex.test(formData.phone)) {
     errors.phone = "Phone Number is invalid";
     valid = false;
+    console.log(valid, "=-");
   }
   if (formData.fax.trim() === "") {
     errors.fax = "fax is required";
@@ -39,6 +40,7 @@ export const validateCompanyForm = (formData) => {
   } else if (!faxRegex.test(formData.fax.trim())) {
     errors.fax = "fax is invalid";
     valid = false;
+    console.log(valid);
   }
   return errors;
 };

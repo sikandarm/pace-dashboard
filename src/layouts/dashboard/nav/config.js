@@ -20,7 +20,7 @@ const navConfig = [
   {
     title: "Permissions",
     path: "/permissions",
-    icon: icon("ic_cart"),
+    icon: icon("ic_permission"),
     requiredPermission: [
       PERMISSIONS.VIEW_PERMISSION,
       PERMISSIONS.ADD_PERMISSION,
@@ -30,7 +30,7 @@ const navConfig = [
   {
     title: "roles",
     path: "/roles",
-    icon: icon("ic_cart"),
+    icon: icon("ic_role"),
     requiredPermission: [
       PERMISSIONS.VIEW_ROLE,
       PERMISSIONS.ADD_ROLE,
@@ -50,7 +50,7 @@ const navConfig = [
   {
     title: "inventory",
     path: "/inventory",
-    icon: icon("ic_cart"),
+    icon: icon("ic_inventory"),
     requiredPermission: [
       PERMISSIONS.VIEW_INVENTORY,
       PERMISSIONS.ADD_INVENTORY,
@@ -60,7 +60,7 @@ const navConfig = [
   {
     title: "jobs",
     path: "/jobs",
-    icon: icon("ic_cart"),
+    icon: icon("ic_job"),
     requiredPermission: [
       PERMISSIONS.VIEW_JOB,
       PERMISSIONS.ADD_JOB,
@@ -70,7 +70,7 @@ const navConfig = [
   {
     title: "Sequence",
     path: "/sequence",
-    icon: icon("ic_cart"),
+    icon: icon("ic_sequence"),
     requiredPermission: [
       PERMISSIONS.ADD_SEQUENCE,
       PERMISSIONS.DELETE_SEQUENCE,
@@ -80,7 +80,7 @@ const navConfig = [
   {
     title: "Tasks",
     path: "/tasks",
-    icon: icon("ic_cart"),
+    icon: icon("ic_task"),
     requiredPermission: [
       PERMISSIONS.VIEW_TASK,
       PERMISSIONS.ADD_TASK,
@@ -90,7 +90,7 @@ const navConfig = [
   {
     title: "Contact",
     path: "/contacts",
-    icon: icon("ic_cart"),
+    icon: icon("ic_contact"),
     requiredPermission: [
       PERMISSIONS.VIEW_CONTACT,
       PERMISSIONS.ADD_CONTACT,
@@ -100,7 +100,7 @@ const navConfig = [
   {
     title: "PurchaseOrder",
     path: "/purchaseorder",
-    icon: icon("ic_cart"),
+    icon: icon("ic_po"),
     requiredPermission: [
       PERMISSIONS.ADD_PURCHASE,
       PERMISSIONS.EDIT_PURCHASE,
@@ -110,7 +110,7 @@ const navConfig = [
   {
     title: "Company",
     path: "/companies",
-    icon: icon("ic_cart"),
+    icon: icon("ic_company"),
     requiredPermission: [
       PERMISSIONS.ADD_Company,
       PERMISSIONS.Edit_Company,
@@ -120,7 +120,7 @@ const navConfig = [
   {
     title: "Vendor",
     path: "/vendors",
-    icon: icon("ic_cart"),
+    icon: icon("ic_vendor"),
     requiredPermission: [
       PERMISSIONS.ADD_VENDOR,
       PERMISSIONS.Edit_VENDOR,

@@ -211,7 +211,7 @@ const CreateFabrecatedItems = () => {
                 <Grid item xs={3} style={{ marginBottom: "5px" }}>
                   <FormControl fullWidth>
                     <InputLabel htmlFor={`label-${index}`}>
-                      Select POItems
+                      Select POItem
                     </InputLabel>
                     <Select
                       value={field.poitems_id}

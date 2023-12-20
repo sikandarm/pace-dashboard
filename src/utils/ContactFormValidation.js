@@ -33,6 +33,7 @@ export const validateContactForm = (newContact) => {
   } else if (!phoneRegex.test(newContact.phoneNumber)) {
     errors.phoneNumber = "Phone Number is invalid";
     valid = false;
+    console.log(valid, "=-");
   }
   return errors;
 };
