@@ -7,6 +7,7 @@ import Iconify from "../../components/iconify";
 import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 import { useSelector } from "react-redux";
 import CModel from "../../components/CModel/CModel";
+import { useDispatch } from "react-redux";
 import {
   // Card,
   Stack,
@@ -22,8 +23,10 @@ import {
   TableBody,
   TableHead,
   TablePagination,
+  MenuItem,
 } from "@mui/material";
 import { useState } from "react";
+import { deletesequencetask } from "../../feature/sequenceSlice";
 
 function Detail() {
   const { id } = useParams();
@@ -51,6 +54,7 @@ function Detail() {
   const { row } = location.state || {};
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const dispatch = useDispatch();
 
   const handleBackClick = () => {
     navigate("/sequence");
@@ -97,6 +101,7 @@ function Detail() {
       setHasFetchedData(true);
     }
   }, [id, sequence, hasFetchedData]);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -104,6 +109,9 @@ function Detail() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+  const handleDelete = (id) => {
+    dispatch(deletesequencetask(id));
   };
 
   return (
@@ -178,6 +186,14 @@ function Detail() {
                             <TableRow key={index}>
                               <TableCell>{item.SequenceName}</TableCell>
                               <TableCell>{item.TaskName}</TableCell>
+                              <TableCell>
+                                <MenuItem
+                                  sx={{ color: "error.main" }}
+                                  onClick={() => handleDelete(item.taskid)}
+                                >
+                                  <Iconify icon={"eva:trash-2-outline"} />
+                                </MenuItem>
+                              </TableCell>
                             </TableRow>
                           ))}
                     </TableBody>

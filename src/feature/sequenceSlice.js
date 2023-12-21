@@ -93,6 +93,21 @@ export const createSequencetask = createAsyncThunk(
     }
   }
 );
+export const deletesequencetask = createAsyncThunk(
+  "deleteSequencetask/Sequencetask",
+  async (data, ThunkApi) => {
+    try {
+      const res = await ApiCall.delete(
+        `/sequencestask/delete-sequence-task/${data}`
+      );
+      if (res.data.success) {
+        return data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 export const sequenceSlice = createSlice({
   name: "sequence",
@@ -130,6 +145,21 @@ export const sequenceSlice = createSlice({
       state.isSequenceLoading = false;
     });
     builder.addCase(deletesequence.rejected, (state, action) => {
+      state.isSequenceLoading = false;
+    });
+    // ------------------ Delete Sequence Task -------------
+
+    builder.addCase(deletesequencetask.pending, (state, action) => {
+      // console.log('in extra pending')
+      state.isSequenceLoading = true;
+    });
+    builder.addCase(deletesequencetask.fulfilled, (state, action) => {
+      state.sequence = state.sequence.filter(
+        (inv) => inv.id !== action.payload
+      );
+      state.isSequenceLoading = false;
+    });
+    builder.addCase(deletesequencetask.rejected, (state, action) => {
       state.isSequenceLoading = false;
     });
 
