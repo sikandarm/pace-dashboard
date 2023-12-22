@@ -1,31 +1,31 @@
-import { useState } from 'react';
-import CTextField from '../CTextField/CTextField';
-import { Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import CSelect from '../CSelect/CSelect';
+import { useState } from "react";
+import CTextField from "../CTextField/CTextField";
+import { Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import CSelect from "../CSelect/CSelect";
 // import CDatePicker from '../CDatePicker/CDatePicker';
-import { createTask } from '../../feature/tasksSlice';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { createTask } from "../../feature/tasksSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditTask = (props) => {
   const dispatch = useDispatch();
   const [data, setData] = useState({
-    heatNo: '',
-    description: '',
-    projectManager: '',
-    QCI: '',
-    fitter: '',
-    welder: '',
-    painter: '',
-    foreman: '',
+    heatNo: "",
+    description: "",
+    projectManager: "",
+    QCI: "",
+    fitter: "",
+    welder: "",
+    painter: "",
+    foreman: "",
   });
   // const [status, setSelectedStatus] = useState('pending');
   const [userId, setSelectedUserId] = useState(null);
   // const [startDate, setJobStartDate] = useState();
   // const [endDate, setJobEndDate] = useState();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [perviewImage, setPerviewImage] = useState('');
+  const [perviewImage, setPerviewImage] = useState("");
   // const selectData = [
   //   { name: 'Pending', value: 'pending' },
   //   { name: 'Approved', value: 'approved' },
@@ -36,7 +36,7 @@ const EditTask = (props) => {
   const [jobId, setJobId] = useState(null);
   const [estimatedHour, setEstimatedHour] = useState(null);
   const handleChange = (event) => {
-    if (event.target.name === 'estimatedHour') {
+    if (event.target.name === "estimatedHour") {
       setEstimatedHour(event.target.value);
     } else {
       setData((prv) => ({ ...prv, [event.target.name]: event.target.value }));
@@ -54,36 +54,41 @@ const EditTask = (props) => {
   };
 
   const handleSubmit = async () => {
-    if (jobId === null || data.heatNo.length === 0 || data.estimatedHour === null) {
-      toast('Fill the required fields');
+    if (
+      jobId === null ||
+      data.heatNo.length === 0 ||
+      data.estimatedHour === null ||
+      userId === null
+    ) {
+      toast("Fill the required fields");
       return;
     }
     const formData = new FormData();
-    formData.append('heatNo', data.heatNo);
-    formData.append('description', data.description);
-    formData.append('estimatedHour', Number(estimatedHour));
-    formData.append('image', selectedFile);
-    formData.append('jobId', Number(jobId));
+    formData.append("heatNo", data.heatNo);
+    formData.append("description", data.description);
+    formData.append("estimatedHour", Number(estimatedHour));
+    formData.append("image", selectedFile);
+    formData.append("jobId", Number(jobId));
     // formData.append('startedAt', startDate);
     // formData.append('completedAt', endDate);
-    formData.append('status', 'pending');
-    formData.append('userId', Number(userId));
-    formData.append('projectManager', data.projectManager);
-    formData.append('QCI', data.QCI);
-    formData.append('fitter', data.fitter);
-    formData.append('welder', data.welder);
-    formData.append('painter', data.painter);
-    formData.append('foreman', data.foreman);
+    formData.append("status", "pending");
+    formData.append("userId", Number(userId));
+    formData.append("projectManager", data.projectManager);
+    formData.append("QCI", data.QCI);
+    formData.append("fitter", data.fitter);
+    formData.append("welder", data.welder);
+    formData.append("painter", data.painter);
+    formData.append("foreman", data.foreman);
     try {
       const res = await dispatch(createTask(formData));
-      if (res.type === 'createTask/tasks/fulfilled') {
+      if (res.type === "createTask/tasks/fulfilled") {
         props.setOpen(false);
-        toast.success('Created successfully !', {
+        toast.success("Created successfully !", {
           position: toast.POSITION.TOP_RIGHT,
         });
       }
 
-      if (res.type === 'createTask/tasks/rejected') {
+      if (res.type === "createTask/tasks/rejected") {
         props.setOpen(true);
         const { message: errorMessage } = res.error;
         toast.error(errorMessage, {
@@ -91,48 +96,57 @@ const EditTask = (props) => {
         });
       }
     } catch (error) {
-      console.log('Error in handleSubmit:', error.message);
-      toast.error(error.message || 'Something went wrong. Please try again later.', {
-        position: toast.POSITION.TOP_RIGHT,
-      });
+      console.log("Error in handleSubmit:", error.message);
+      toast.error(
+        error.message || "Something went wrong. Please try again later.",
+        {
+          position: toast.POSITION.TOP_RIGHT,
+        }
+      );
     }
   };
 
   return (
-    <div style={{ overflowY: selectedFile || perviewImage ? 'scroll' : '', maxHeight: '550px', overflowX: 'hidden' }}>
+    <div
+      style={{
+        overflowY: selectedFile || perviewImage ? "scroll" : "",
+        maxHeight: "550px",
+        overflowX: "hidden",
+      }}
+    >
       <div
         style={{
-          display: 'flex',
-          width: '100%',
-          flexDirection: 'column',
-          alignItems: 'center',
-          background: '#2065D1',
+          display: "flex",
+          width: "100%",
+          flexDirection: "column",
+          alignItems: "center",
+          background: "#2065D1",
           borderRadius: 10,
-          color: 'white',
-          marginBottom: '20px',
+          color: "white",
+          marginBottom: "20px",
         }}
       >
         <h3>Add Task</h3>
       </div>
       <div
         style={{
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
+          width: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
         }}
       >
         <div
           style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <CTextField
               required={true}
               defaultValue={data.heatNo}
@@ -150,17 +164,17 @@ const EditTask = (props) => {
             data={props.jobs}
             initialValue={jobId}
             setinitialValue={setJobId}
-            padding={'0px 8px'}
+            padding={"0px 8px"}
           />
         </div>
 
         <div
           style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            alignItems: 'center',
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
           }}
         >
           <CTextField
@@ -172,7 +186,7 @@ const EditTask = (props) => {
             label="Description"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.projectManager}
             margin="5px 0px"
@@ -183,7 +197,7 @@ const EditTask = (props) => {
             label="Project Manager"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.QCI}
             margin="5px 0px"
@@ -194,7 +208,7 @@ const EditTask = (props) => {
             label="QCI"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.fitter}
             margin="5px 0px"
@@ -205,7 +219,7 @@ const EditTask = (props) => {
             label="Fitter"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.welder}
             margin="5px 0px"
@@ -216,7 +230,7 @@ const EditTask = (props) => {
             label="Welder"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.painter}
             margin="5px 0px"
@@ -227,7 +241,7 @@ const EditTask = (props) => {
             label="Painter"
           />
         </div>
-        <div style={{ width: '50%' }}>
+        <div style={{ width: "50%" }}>
           <CTextField
             defaultValue={data.foreman}
             margin="5px 0px"
@@ -240,11 +254,11 @@ const EditTask = (props) => {
         </div>
         <div
           style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           {/* <div style={{ width: '50%' }}>
@@ -256,15 +270,15 @@ const EditTask = (props) => {
         </div>
         <div
           style={{
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            margin: '10px 0px',
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            margin: "10px 0px",
           }}
         >
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <CTextField
               required={true}
               margin="5px 0px"
@@ -275,15 +289,16 @@ const EditTask = (props) => {
               label="Estimated Hour"
             />
           </div>
-          <div style={{ width: '50%' }}>
+          <div style={{ width: "50%" }}>
             <CSelect
               disabled={false}
               label="Assign To:"
               data={props.users}
               initialValue={userId}
               setinitialValue={setSelectedUserId}
-              padding={'0px 0px'}
+              padding={"0px 0px"}
               filter="users"
+              required
             />
           </div>
         </div>
@@ -325,20 +340,24 @@ const EditTask = (props) => {
           />
         </div> */}
         {perviewImage ? (
-          <div style={{ width: '100%', textAlign: 'center' }}>
-            <img alt="task" style={{ width: '700px', height: '350px' }} src={perviewImage} />
+          <div style={{ width: "100%", textAlign: "center" }}>
+            <img
+              alt="task"
+              style={{ width: "700px", height: "350px" }}
+              src={perviewImage}
+            />
           </div>
         ) : (
-          ''
+          ""
         )}
         <CTextField name="File" type="file" onChange={handleFileChange} />
         <Button
           disabled={props.isLoading}
           onClick={handleSubmit}
           variant="outlined"
-          sx={{ width: '100%', margin: '10px 0px 0px 0px' }}
+          sx={{ width: "100%", margin: "10px 0px 0px 0px" }}
         >
-          {props.isLoading ? 'Loading..' : ' Submit'}
+          {props.isLoading ? "Loading.." : " Submit"}
         </Button>
       </div>
     </div>

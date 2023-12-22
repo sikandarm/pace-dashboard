@@ -1,15 +1,15 @@
-import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import CModel from '../../components/CModel/CModel';
+import { Helmet } from "react-helmet-async";
+import { filter } from "lodash";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import CModel from "../../components/CModel/CModel";
 // @mui
 import {
   Card,
   Table,
   Stack,
   Paper,
-  Button,
+  // Button,
   TableRow,
   MenuItem,
   TableBody,
@@ -19,34 +19,38 @@ import {
   TableContainer,
   TablePagination,
   Breadcrumbs,
-} from '@mui/material';
+} from "@mui/material";
 // components
-import Iconify from '../../components/iconify';
-import Scrollbar from '../../components/scrollbar';
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
-import { useSelector } from 'react-redux';
-import { clearErrorMessage, deleteRole, getRoles } from '../../feature/roleSlice';
-import { getPermission } from '../../feature/permissionsSlice';
-import { HomeRounded } from '@material-ui/icons';
-import { hasPermission, PERMISSIONS } from '../../utils/hasPermission';
+import Iconify from "../../components/iconify";
+import Scrollbar from "../../components/scrollbar";
+import { UserListHead, UserListToolbar } from "../../sections/@dashboard/user";
+import { useSelector } from "react-redux";
+import {
+  clearErrorMessage,
+  deleteRole,
+  getRoles,
+} from "../../feature/roleSlice";
+import { getPermission } from "../../feature/permissionsSlice";
+import { HomeRounded } from "@material-ui/icons";
+import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'permission', label: 'Permission   ', alignRight: false },
-  { id: '' },
+  { id: "name", label: "Name", alignRight: false },
+  { id: "permission", label: "Permission   ", alignRight: false },
+  { id: "" },
 ];
 
 export default function Roles(props) {
   const dispatch = useDispatch();
-  const open = false;
+  //const open = false;
   const [page, setPage] = useState(0);
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState("asc");
   const [selected, setSelected] = useState([]);
-  const [orderBy, setOrderBy] = useState('name');
-  const [filterName, setFilterName] = useState('');
+  const [orderBy, setOrderBy] = useState("name");
+  const [filterName, setFilterName] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [errorMesage, setErrorMessage] = useState('');
-  const [selectedRow, setSelectedRow] = useState('');
+  const [errorMesage, setErrorMessage] = useState("");
+  const [selectedRow, setSelectedRow] = useState("");
   const [openModel, setOpenModel] = useState(false);
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const { roles, message } = useSelector((state) => state.roleSlice);
@@ -60,8 +64,8 @@ export default function Roles(props) {
   const canViewRoleList = hasPermission(userPermissions, PERMISSIONS.VIEW_ROLE);
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
@@ -78,7 +82,10 @@ export default function Roles(props) {
     const stabilizedThis = array.map((el, index) => [el, index]);
 
     if (query) {
-      return filter(roles, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+      return filter(
+        roles,
+        (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      );
     }
     return stabilizedThis.map((el) => el[0]);
   }
@@ -97,16 +104,17 @@ export default function Roles(props) {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - roles.length) : 0;
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - roles.length) : 0;
   const filteredUsers = applySortFilter(roles, filterName);
   const isNotFound = !filteredUsers.length && !!filterName;
 
   const handleDelete = (id) => {
     dispatch(deleteRole(id));
   };
-  const handleOpenModel = () => {
-    setOpenModel(!open);
-  };
+  // const handleOpenModel = () => {
+  //   setOpenModel(!open);
+  // };
   useEffect(() => {
     if (message) {
       setErrorMessage(message);
@@ -120,25 +128,34 @@ export default function Roles(props) {
   }, [dispatch, openModel, openUpdateModel]);
   return (
     <>
-      {errorMesage ? errorMesage : ''}
+      {errorMesage ? errorMesage : ""}
       <Helmet>
         <title> Role | Pace Role </title>
       </Helmet>
-      {openModel ? <CModel open={openModel} setOpen={setOpenModel} filter={'add-role'} /> : ''}
+      {openModel ? (
+        <CModel open={openModel} setOpen={setOpenModel} filter={"add-role"} />
+      ) : (
+        ""
+      )}
       {openUpdateModel ? (
         <CModel
           open={openUpdateModel}
           data={selectedRow}
           permissions={permissions}
           setOpen={setOpenUpdateModel}
-          filter={'update-role'}
+          filter={"update-role"}
         />
       ) : (
-        ''
+        ""
       )}
       {canViewRoleList && (
         <Container>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={5}
+          >
             <Breadcrumbs aria-label="breadcrumb">
               <Stack direction="row" alignItems="center" spacing={1}>
                 <HomeRounded color="inherit" />
@@ -147,16 +164,16 @@ export default function Roles(props) {
                 </Typography>
               </Stack>
             </Breadcrumbs>
-            {canAddRole && (
-              <Button onClick={handleOpenModel} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-                New Role
-              </Button>
-            )}
+            {canAddRole &&
+              // <Button onClick={handleOpenModel} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              //   New Role
+              // </Button>
+              ""}
           </Stack>
 
           <Card>
             <UserListToolbar
-              label={'Search role..'}
+              label={"Search role.."}
               numSelected={selected.length}
               filterName={filterName}
               onFilterName={handleFilterByName}
@@ -175,41 +192,68 @@ export default function Roles(props) {
                     onSelectAllClick={handleSelectAllClick}
                   />
                   <TableBody>
-                    {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                      const { id, name, permissions } = row;
-                      const selectedUser = selected.indexOf(name) !== -1;
-                      return (
-                        <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center">
-                              {/* <Avatar alt={name} src={'R'} /> */}
-                              <Typography variant="subtitle2" sx={{ padding: '0px 15px' }} noWrap>
-                                {name}
-                              </Typography>
-                            </Stack>
-                          </TableCell>
-                          <TableCell align="left">{permissions ? permissions.length : 0}</TableCell>
-                          <TableCell align="right" style={{ display: 'flex' }}>
-                            {canEditRole && (
-                              <MenuItem
-                                onClick={() => {
-                                  setSelectedRow(row);
-                                  setOpenUpdateModel(!openUpdateModel);
-                                }}
-                              >
-                                <Iconify icon={'eva:edit-fill'} />
-                              </MenuItem>
-                            )}
+                    {filteredUsers
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((row) => {
+                        const { id, name, permissions } = row;
+                        const selectedUser = selected.indexOf(name) !== -1;
+                        return (
+                          <TableRow
+                            hover
+                            key={id}
+                            tabIndex={-1}
+                            role="checkbox"
+                            selected={selectedUser}
+                          >
+                            <TableCell
+                              component="th"
+                              scope="row"
+                              padding="none"
+                            >
+                              <Stack direction="row" alignItems="center">
+                                {/* <Avatar alt={name} src={'R'} /> */}
+                                <Typography
+                                  variant="subtitle2"
+                                  sx={{ padding: "0px 15px" }}
+                                  noWrap
+                                >
+                                  {name}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
+                            <TableCell align="left">
+                              {permissions ? permissions.length : 0}
+                            </TableCell>
+                            <TableCell
+                              align="right"
+                              style={{ display: "flex" }}
+                            >
+                              {canEditRole && (
+                                <MenuItem
+                                  onClick={() => {
+                                    setSelectedRow(row);
+                                    setOpenUpdateModel(!openUpdateModel);
+                                  }}
+                                >
+                                  <Iconify icon={"eva:edit-fill"} />
+                                </MenuItem>
+                              )}
 
-                            {canDeleteRole && (
-                              <MenuItem sx={{ color: 'error.main' }} onClick={() => handleDelete(id)}>
-                                <Iconify icon={'eva:trash-2-outline'} />
-                              </MenuItem>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
+                              {canDeleteRole && (
+                                <MenuItem
+                                  sx={{ color: "error.main" }}
+                                  onClick={() => handleDelete(id)}
+                                >
+                                  <Iconify icon={"eva:trash-2-outline"} />
+                                </MenuItem>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 53 * emptyRows }}>
                         <TableCell colSpan={6} />
@@ -223,7 +267,7 @@ export default function Roles(props) {
                         <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
                           <Paper
                             sx={{
-                              textAlign: 'center',
+                              textAlign: "center",
                             }}
                           >
                             <Typography variant="h6" paragraph>
@@ -233,7 +277,8 @@ export default function Roles(props) {
                             <Typography variant="body2">
                               No results found for &nbsp;
                               <strong>&quot;{filterName}&quot;</strong>.
-                              <br /> Try checking for typos or using complete words.
+                              <br /> Try checking for typos or using complete
+                              words.
                             </Typography>
                           </Paper>
                         </TableCell>

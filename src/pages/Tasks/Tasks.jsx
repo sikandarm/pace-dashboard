@@ -525,7 +525,7 @@ export default function Tasks(props) {
 
                             <TableCell
                               align="right"
-                              style={{ display: "flex" }}
+                              style={{ display: "flex", marginTop: "50px" }}
                             >
                               {canEditTask && (
                                 <MenuItem

@@ -26,6 +26,7 @@ export default function CModel(props) {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width:
+      props.filter === "update-role" ||
       props.filter === "call-list" ||
       props.filter === "update-inventory" ||
       props.filter === "add-inventory" ||
