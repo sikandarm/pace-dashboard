@@ -34,7 +34,7 @@ function Detail() {
   const { permissions: userPermissions } = loginUser.decodedToken;
   const canAddFabricatedItems = hasPermission(
     userPermissions,
-    PERMISSIONS.Add_FabricatedItems
+    PERMISSIONS.Add_Fabricated_Items
   );
 
   useEffect(() => {

@@ -46,7 +46,7 @@ const PERMISSIONS = {
   Edit_VENDOR: "edit_vendor",
   Delete_VENDOR: "delete_vendor",
   Detail_Job: "detail_job",
-  Add_FabricatedItems: "add_fabricateditems",
+  Add_Fabricated_Items: "add_fabricated_items",
   Update_FabricatedItems: "update_fabricateditems",
   ADD_SEQUENCE: "add_sequence",
   DELETE_SEQUENCE: "delete_sequence",

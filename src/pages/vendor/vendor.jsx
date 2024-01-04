@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ApiCall from "../../utils/apicall";
 import { useSelector } from "react-redux";
 import { Helmet } from "react-helmet-async";
+import { toast } from "react-toastify";
 import {
   Container,
   Table,
@@ -38,14 +39,19 @@ const Vendor = () => {
   const [openUpdateModel, setOpenUpdateModel] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItemdele, setSelectedItemdele] = useState(null);
   const { loginUser } = useSelector((state) => state.userSlice);
   const { permissions: userPermissions } = loginUser.decodedToken;
-  const canAddVendor = hasPermission(userPermissions, PERMISSIONS.ADD_VENDOR);
-  const canEditVendor = hasPermission(userPermissions, PERMISSIONS.Edit_VENDOR);
+  const canAddVendor = hasPermission(userPermissions, PERMISSIONS.ADD_Company);
+  const canEditVendor = hasPermission(
+    userPermissions,
+    PERMISSIONS.Edit_Company
+  );
   const canDeleteVendor = hasPermission(
     userPermissions,
-    PERMISSIONS.Delete_VENDOR
+    PERMISSIONS.Delete_Company
   );
+
   const fetchVendors = async () => {
     try {
       const response = await ApiCall.get("/vendor");
@@ -84,6 +90,7 @@ const Vendor = () => {
       // console.log("Vendor added successfully:", response.data.data.vendors);
       if (response) {
         fetchVendors();
+        toast("Vendor Added Successfully!");
         setNewVendorData({ vendor_name: "" });
         setFormErrors({
           vendor_name: "",
@@ -142,6 +149,7 @@ const Vendor = () => {
       );
       if (response.status === 200) {
         fetchVendors();
+        toast("Vendor Updated Successfully!");
         var updatedVendor = response.data.data.vendor;
         var updatedVendors = vendors.map((vendor) =>
           vendor.id === updatedVendor.id ? updatedVendor : vendor
@@ -166,7 +174,7 @@ const Vendor = () => {
 
       // Fetch the updated vendors from the backend after deletion
       await fetchVendors();
-
+      toast("Vendor Deleted Successfully!");
       console.log("Vendor marked as deleted successfully");
     } catch (error) {
       console.error("Error marking vendor as deleted:", error);
@@ -299,7 +307,7 @@ const Vendor = () => {
               <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Add New Vendor</DialogTitle>
                 <DialogContent>
-                  <form>
+                  <form style={{ marginTop: "5px" }}>
                     <TextField
                       label="Name"
                       variant="outlined"
@@ -353,7 +361,7 @@ const Vendor = () => {
                         <Dialog open={openUpdateModel} onClose={handleClose}>
                           <DialogTitle>Edit Vendor</DialogTitle>
                           <DialogContent>
-                            <form>
+                            <form style={{ marginTop: "5px" }}>
                               <TextField
                                 label="Vendor Name"
                                 variant="outlined"
@@ -383,12 +391,39 @@ const Vendor = () => {
                         {canDeleteVendor && (
                           <MenuItem
                             sx={{ color: "error.main" }}
-                            onClick={() => handleDelete(vendor.id)}
+                            onClick={() => setSelectedItemdele(vendor.id)}
                           >
                             <Iconify icon={"eva:trash-2-outline"} />
                           </MenuItem>
                         )}
                       </TableCell>
+                      <Dialog
+                        open={selectedItemdele !== null}
+                        onClose={() => setSelectedItemdele(null)}
+                      >
+                        <DialogTitle>Delete Vendor</DialogTitle>
+                        <DialogContent>
+                          <Typography>
+                            Are you sure you want to delete vendor {""}
+                            {selectedItemdele?.vendor_name}?
+                          </Typography>
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={() => setSelectedItemdele(null)}>
+                            Cancel
+                          </Button>
+
+                          <Button
+                            onClick={() => {
+                              handleDelete(selectedItemdele);
+                              setSelectedItemdele(null);
+                            }}
+                            sx={{ color: "error.main" }}
+                          >
+                            Delete
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
                     </TableRow>
                   ))}
                 {emptyRows > 0 && (

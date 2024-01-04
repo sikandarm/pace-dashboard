@@ -122,9 +122,9 @@ const navConfig = [
     path: "/vendors",
     icon: icon("ic_vendor"),
     requiredPermission: [
-      PERMISSIONS.ADD_VENDOR,
-      PERMISSIONS.Edit_VENDOR,
-      PERMISSIONS.Delete_VENDOR,
+      PERMISSIONS.ADD_Company,
+      PERMISSIONS.Edit_Company,
+      PERMISSIONS.Delete_Company,
     ],
   },
 ];

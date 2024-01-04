@@ -28,6 +28,8 @@ import CreateFabrecatedItems from "./pages/Jobs/CreateFabrecatedItems.jsx";
 import UpdateFabrecatedItems from "./pages/Jobs/UpdateFabrecatedItem.jsx";
 import Sequence from "./pages/Sequence/Sequence.jsx";
 import SequenceDetail from "./pages/Sequence/Detail.jsx";
+import RFI from "./pages/PurchaseOrder/RFIForm.jsx";
+// import PasswordResetForm from "./pages/PasswordResetPage.jsx";
 // ----------------------------------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
 import PasswordResetPage from "./pages/PasswordResetPage";
@@ -64,6 +66,7 @@ export default function Router() {
         { path: "purchaseorderitem/:id", element: <PurchaseOrderItems /> },
         { path: "Details/:id", element: <Details /> },
         { path: "purchaseorderform/:id", element: <PurchaseOrderForm /> },
+        { path: "/rfi-form", element: <RFI /> },
         { path: "companies", element: <Company /> },
         { path: "tasks", element: <Tasks /> },
         { path: "sequence", element: <Sequence /> },
@@ -76,7 +79,7 @@ export default function Router() {
     //   element: <LoginPage />,
     // },
     // {
-    //   path: 'reset-password',
+    //   path: "reset-password",
     //   element: <PasswordResetForm />,
     // },
     {

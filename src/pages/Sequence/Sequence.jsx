@@ -3,6 +3,7 @@ import { filter } from "lodash";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import CModel from "../../components/CModel/CModel";
+import { toast } from "react-toastify";
 import {
   Card,
   Table,
@@ -18,6 +19,10 @@ import {
   TableContainer,
   TablePagination,
   Breadcrumbs,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  Dialog,
 } from "@mui/material";
 // components
 import Iconify from "../../components/iconify";
@@ -74,6 +79,8 @@ export default function Sequence() {
   const { sequence, isSequenceLoading } = useSelector(
     (state) => state.sequenceSlice
   );
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedContactId, setSelectedContactId] = useState(null);
 
   const { loginUser } = useSelector((state) => state.userSlice);
   const { permissions: userPermissions } = loginUser.decodedToken;
@@ -152,7 +159,13 @@ export default function Sequence() {
 
   const handleDelete = (id) => {
     dispatch(deletesequence(id));
+    toast("Sequence Deleted Successfully!");
   };
+  const handleDeleteDia = (id) => {
+    setSelectedContactId(id);
+    setOpenDeleteDialog(true);
+  };
+
   const handleOpenModel = () => {
     setOpenModel(!open);
   };
@@ -319,7 +332,7 @@ export default function Sequence() {
                               {canDeleteSequence && (
                                 <MenuItem
                                   sx={{ color: "error.main" }}
-                                  onClick={() => handleDelete(id)}
+                                  onClick={() => handleDeleteDia(id)}
                                 >
                                   <Iconify icon={"eva:trash-2-outline"} />
                                 </MenuItem>
@@ -334,6 +347,33 @@ export default function Sequence() {
                                 </MenuItem>
                               )}
                             </TableCell>
+                            <Dialog
+                              open={openDeleteDialog}
+                              onClose={() => setOpenDeleteDialog(false)}
+                            >
+                              <DialogTitle>Delete Sequence</DialogTitle>
+                              <DialogContent>
+                                <Typography>
+                                  Are you sure you want to delete this sequence?
+                                </Typography>
+                              </DialogContent>
+                              <DialogActions>
+                                <Button
+                                  onClick={() => setOpenDeleteDialog(false)}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    handleDelete(selectedContactId);
+                                    setOpenDeleteDialog(false);
+                                  }}
+                                  color="primary"
+                                >
+                                  Delete
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
                           </TableRow>
                         );
                       })}

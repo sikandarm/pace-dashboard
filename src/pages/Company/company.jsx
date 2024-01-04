@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ApiCall from "../../utils/apicall";
 import { Helmet } from "react-helmet-async";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import {
   Container,
   Stack,
@@ -134,6 +135,7 @@ const CompanyList = () => {
 
         if (response.status === 200) {
           fetchCompanies();
+          toast("Company Updated Successfully!");
           // var updatedCompany = response.data.data.company;
           // var updatedCompanies = companies.map((company) =>
           //   company.id === updatedCompany.id ? updatedCompany : company
@@ -164,6 +166,7 @@ const CompanyList = () => {
       const response = await ApiCall.delete(`/company/${id}`);
       if (response) {
         fetchCompanies();
+        toast("Company Deleted Successfully!");
         setCompanies((company) => company.filter((order) => order.id !== id));
       } else {
       }
@@ -215,6 +218,7 @@ const CompanyList = () => {
         // console.log("Company added successfully:", response.data);
         if (response) {
           fetchCompanies();
+          toast("Company Added Successfully!");
           setFormData({
             name: "",
             email: "",
@@ -470,7 +474,7 @@ const CompanyList = () => {
                                     }
                                     error={formErrors.name !== undefined}
                                     helperText={formErrors.name}
-                                    style={{ marginTop: "5px" }}
+                                    style={{ marginTop: "7px" }}
                                   />
 
                                   <TextField
@@ -562,10 +566,10 @@ const CompanyList = () => {
                           open={selectedItem !== null}
                           onClose={() => setSelectedItem(null)}
                         >
-                          <DialogTitle>Delete Purchase Order</DialogTitle>
+                          <DialogTitle>Delete Company</DialogTitle>
                           <DialogContent>
                             <Typography>
-                              Are you sure you want to delete Purchase Order{" "}
+                              Are you sure you want to delete company {""}
                               {selectedItem?.company_name}?
                             </Typography>
                           </DialogContent>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 import {
   Table,
   TableBody,
@@ -136,7 +138,8 @@ export default function PurchaseOrder() {
 
       if (response) {
         fetchPurchaseOrder();
-        console.log("Purchase Order deleted successfully");
+        toast("PurchaseOrder Deleted Successfully!");
+        // console.log("Purchase Order deleted successfully");
         setPurchaseOrders((PurchaseOrder) =>
           PurchaseOrder.filter((order) => order.id !== id)
         );
@@ -188,6 +191,10 @@ export default function PurchaseOrder() {
     };
     handleSearchs();
   }, [filterName]);
+
+  const handleRfi = () => {
+    navigate(`/rfi-form`);
+  };
 
   return (
     <div>
@@ -299,6 +306,14 @@ export default function PurchaseOrder() {
                               <Iconify icon={"eva:info-outline"} />
                             </MenuItem>
                           )}
+                          {canViewDetails && (
+                            <MenuItem
+                              sx={{ color: "error.main" }}
+                              onClick={() => handleRfi()}
+                            >
+                              <Iconify icon={"bx:rfid"} />
+                            </MenuItem>
+                          )}
                         </TableCell>
                         <Dialog
                           open={selectedItem !== null}
@@ -307,8 +322,7 @@ export default function PurchaseOrder() {
                           <DialogTitle>Delete Purchase Order</DialogTitle>
                           <DialogContent>
                             <Typography>
-                              Are you sure you want to delete Purchase Order{" "}
-                              {selectedItem?.company_name}?
+                              Are you sure you want to delete Purchase Order ?{" "}
                             </Typography>
                           </DialogContent>
                           <DialogActions>

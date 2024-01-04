@@ -143,7 +143,6 @@ const EditTask = (props) => {
       props.reasons.filter((reason) => !selectedReasons.includes(reason.name)),
     [props.reasons, selectedReasons]
   );
-
   const handleReasonsChange = (event, newValue) => {
     setSelectedReasons(newValue);
   };

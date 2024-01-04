@@ -525,7 +525,7 @@ export default function Tasks(props) {
 
                             <TableCell
                               align="right"
-                              style={{ display: "flex", marginTop: "50px" }}
+                              style={{ display: "flex", marginTop: "0px" }}
                             >
                               {canEditTask && (
                                 <MenuItem
@@ -536,6 +536,7 @@ export default function Tasks(props) {
                                       setOpenUpdateModel(!openUpdateModel);
                                     });
                                   }}
+                                  style={{ marginTop: "25px" }}
                                 >
                                   <Iconify icon={"eva:edit-fill"} />
                                 </MenuItem>
@@ -547,6 +548,7 @@ export default function Tasks(props) {
                                     setConformation(true);
                                     setDeleteId(id);
                                   }}
+                                  style={{ marginTop: "25px" }}
                                 >
                                   <Iconify icon={"eva:trash-2-outline"} />
                                 </MenuItem>

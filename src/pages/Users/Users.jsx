@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { Helmet } from "react-helmet-async";
+
 // @mui
 import {
   Table,
@@ -44,7 +46,6 @@ const Users = () => {
   const canEditUSer = hasPermission(userPermissions, PERMISSIONS.EDIT_USER);
   const canDeleteUSer = hasPermission(userPermissions, PERMISSIONS.DELETE_USER);
   const canViewUserList = hasPermission(userPermissions, PERMISSIONS.VIEW_USER);
-
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -133,6 +134,9 @@ const Users = () => {
 
   return (
     <>
+      <Helmet>
+        <title> Users | Pace Users </title>
+      </Helmet>
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={closeDeleteModal}

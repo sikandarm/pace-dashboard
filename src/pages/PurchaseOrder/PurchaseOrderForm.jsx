@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import {
   TextField,
   Button,
@@ -38,7 +40,7 @@ function PurchaseOrderForm() {
     fax: "",
     status: "",
   });
-  
+
   const [companies, setCompanies] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [user, setUser] = useState([]);
@@ -105,7 +107,9 @@ function PurchaseOrderForm() {
           response = await ApiCall.put(`/purchaseorder/${id}`, formData);
 
           if (response.status === 200 || response.status === 201) {
-            console.log("Data", id ? "Updated" : "Created");
+            // console.log("Data", id ? "Updated" : "Created");
+            toast("PurchaseOrder Updated Successfully!");
+
             navigate("/purchaseorder");
           } else {
             // Handle error
@@ -117,7 +121,8 @@ function PurchaseOrderForm() {
           response = await ApiCall.post("/purchaseorder", formData);
 
           if (response.status === 200 || response.status === 201) {
-            console.log("Data", id ? "Updated" : "Created");
+            // console.log("Data", id ? "Updated" : "Created");
+            toast("PurchaseOrder Added Successfully!");
             navigate(
               `/purchaseorderitem/${response.data.data.purchaseOrder.id}`
             );

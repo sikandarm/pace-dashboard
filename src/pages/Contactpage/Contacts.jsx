@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 import {
   Card,
   Table,
@@ -62,6 +64,8 @@ export default function Contacts() {
     userPermissions,
     PERMISSIONS.DELETE_CONTACT
   );
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedContactId, setSelectedContactId] = useState(null);
 
   const contacts = useSelector((state) => state.ContactSlice.contacts);
 
@@ -129,8 +133,14 @@ export default function Contacts() {
   const handleDelete = async (id) => {
     var data = dispatch(deleteContact(id));
     if (data) {
+      toast("Contact Deleted Successfully!");
+
       fetchContacts();
     }
+  };
+  const handleDeletedialog = (id) => {
+    setSelectedContactId(id);
+    setOpenDeleteDialog(true);
   };
 
   const handleFilterByName = (event) => {
@@ -182,6 +192,8 @@ export default function Contacts() {
           setFormErrors("");
           handleClose();
           // window.location.reload();
+          toast("Contact Added Successfully!");
+
           fetchContacts();
           //   dispatch(getContacts(response.data));
           setNewContact({ ...initialNewContact });
@@ -208,6 +220,8 @@ export default function Contacts() {
           //   contact.id === updatedContact.id ? updatedContact : contact
           // );
           handleClose();
+          toast("Contact Updated Successfully!");
+
           fetchContacts();
           setOpenUpdateModel(false);
         } else {
@@ -291,7 +305,7 @@ export default function Contacts() {
                 <DialogTitle style={{ background: "#2196F3", color: "#fff" }}>
                   Edit Contact
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent style={{ marginTop: "10px" }}>
                   <TextField
                     label="First Name"
                     fullWidth
@@ -306,6 +320,7 @@ export default function Contacts() {
                     }
                     error={formErrors.firstName !== undefined}
                     helperText={formErrors.firstName}
+                    style={{ marginBottom: "10px" }}
                   />
 
                   <TextField
@@ -322,6 +337,7 @@ export default function Contacts() {
                     }
                     error={formErrors.lastName !== undefined}
                     helperText={formErrors.lastName}
+                    style={{ marginBottom: "10px" }}
                   />
                   <TextField
                     label="Email"
@@ -334,6 +350,7 @@ export default function Contacts() {
                     }
                     error={formErrors.email !== undefined}
                     helperText={formErrors.email}
+                    style={{ marginBottom: "10px" }}
                   />
                   <TextField
                     label="Phone Number"
@@ -349,6 +366,7 @@ export default function Contacts() {
                     }
                     error={formErrors.phoneNumber !== undefined}
                     helperText={formErrors.phoneNumber}
+                    style={{ marginBottom: "10px" }}
                   />
                 </DialogContent>
                 <DialogActions>
@@ -509,12 +527,39 @@ export default function Contacts() {
                               {canDeleteContact && (
                                 <MenuItem
                                   sx={{ color: "error.main" }}
-                                  onClick={() => handleDelete(id)}
+                                  onClick={() => handleDeletedialog(id)}
                                 >
                                   <Iconify icon={"eva:trash-2-outline"} />
                                 </MenuItem>
                               )}
                             </TableCell>
+                            <Dialog
+                              open={openDeleteDialog}
+                              onClose={() => setOpenDeleteDialog(false)}
+                            >
+                              <DialogTitle>Delete Contact</DialogTitle>
+                              <DialogContent>
+                                <Typography>
+                                  Are you sure you want to delete this contact?
+                                </Typography>
+                              </DialogContent>
+                              <DialogActions>
+                                <Button
+                                  onClick={() => setOpenDeleteDialog(false)}
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    handleDelete(selectedContactId);
+                                    setOpenDeleteDialog(false);
+                                  }}
+                                  color="primary"
+                                >
+                                  Delete
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
                           </TableRow>
                         );
                       })}

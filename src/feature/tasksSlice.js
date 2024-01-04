@@ -1,109 +1,128 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import ApiCall from '../utils/apicall';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import ApiCall from "../utils/apicall";
 
-export const getTasks = createAsyncThunk('get-tasks/tasks', async (ThunkApi) => {
-  try {
-    const res = await ApiCall.get('/task');
-    if (res.data.data.tasks) {
-      return res.data.data.tasks.data;
-    } else throw new Error('No User Found !');
-  } catch (error) {
-    console.log(error);
-    return ThunkApi.rejectWithValue('Error logging in');
+export const getTasks = createAsyncThunk(
+  "get-tasks/tasks",
+  async (ThunkApi) => {
+    try {
+      const res = await ApiCall.get("/task");
+      if (res.data.data.tasks) {
+        return res.data.data.tasks.data;
+      } else throw new Error("No User Found !");
+    } catch (error) {
+      console.log(error);
+      return ThunkApi.rejectWithValue("Error logging in");
+    }
   }
-});
+);
 
-export const getRejectionReasons = createAsyncThunk('rejection-reasons/rejections', async (ThunkApi) => {
-  try {
-    const res = await ApiCall.get('/rejected-reasons');
-    if (res.data.data.reasons) {
-      const allReasons = res.data.data.reasons;
-      const reasons = [];
-      allReasons.forEach((reason) => {
-        reasons.push(...reason.children);
+export const getRejectionReasons = createAsyncThunk(
+  "rejection-reasons/rejections",
+  async (ThunkApi) => {
+    try {
+      const res = await ApiCall.get("/rejected-reasons");
+      if (res.data.data.reasons) {
+        const allReasons = res.data.data.reasons;
+        const reasons = [];
+        allReasons.forEach((reason) => {
+          reasons.push(...reason.children);
+        });
+        // console.log(reasons);
+        return reasons;
+      } else throw new Error("No reason Found !");
+    } catch (error) {
+      console.log(error);
+      return ThunkApi.rejectWithValue("Error logging in");
+    }
+  }
+);
+
+export const getSingleTasks = createAsyncThunk(
+  "get-single-tasks/tasks",
+  async (id, ThunkApi) => {
+    try {
+      const res = await ApiCall.get(`/task/${id}`);
+      if (res.data.data.task) {
+        return res.data.data.task;
+      } else throw new Error("No User Found !");
+    } catch (error) {
+      console.log(error);
+      return ThunkApi.rejectWithValue("Error logging in");
+    }
+  }
+);
+
+export const createTask = createAsyncThunk(
+  "createTask/tasks",
+  async (data, ThunkApi) => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_URL}/task`, {
+        method: "POST",
+        body: data,
       });
-      return reasons;
-    } else throw new Error('No reason Found !');
-  } catch (error) {
-    console.log(error);
-    return ThunkApi.rejectWithValue('Error logging in');
-  }
-});
+      const task = await res.json();
 
-export const getSingleTasks = createAsyncThunk('get-single-tasks/tasks', async (id, ThunkApi) => {
-  try {
-    const res = await ApiCall.get(`/task/${id}`);
-    if (res.data.data.task) {
-      return res.data.data.task;
-    } else throw new Error('No User Found !');
-  } catch (error) {
-    console.log(error);
-    return ThunkApi.rejectWithValue('Error logging in');
-  }
-});
-
-export const createTask = createAsyncThunk('createTask/tasks', async (data, ThunkApi) => {
-  try {
-    const res = await fetch(`${process.env.REACT_APP_URL}/task`, {
-      method: 'POST',
-      body: data,
-    });
-    const task = await res.json();
-
-    if (task && task.success) {
-      if (task.data && task.data.task) {
-        return task.data.task;
+      if (task && task.success) {
+        if (task.data && task.data.task) {
+          return task.data.task;
+        } else {
+          console.log("Invalid response from server");
+          throw new Error("Invalid response from server");
+        }
       } else {
-        console.log('Invalid response from server');
-        throw new Error('Invalid response from server');
+        console.log("Error creating task:", task.message);
+        throw new Error(task.message || "Error creating task");
       }
-    } else {
-      console.log('Error creating task:', task.message);
-      throw new Error(task.message || 'Error creating task');
+    } catch (error) {
+      console.log("Error creating task:", error.message);
+      throw new Error(error.message || "Error creating task");
     }
-  } catch (error) {
-    console.log('Error creating task:', error.message);
-    throw new Error(error.message || 'Error creating task');
   }
-});
+);
 
-export const updateTasks = createAsyncThunk('updateTasks/tasks', async (data, ThunkApi) => {
-  try {
-    const res = await fetch(`${process.env.REACT_APP_URL}/task/${data.id}`, {
-      method: 'PUT',
-      body: data.formData,
-    });
-    let updatedTask = await res.json();
+export const updateTasks = createAsyncThunk(
+  "updateTasks/tasks",
+  async (data, ThunkApi) => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_URL}/task/${data.id}`, {
+        method: "PUT",
+        body: data.formData,
+      });
+      let updatedTask = await res.json();
 
-    if (updatedTask && updatedTask.success) {
-      if (updatedTask.data && updatedTask.data.task) {
-        return updatedTask.data.task;
+      if (updatedTask && updatedTask.success) {
+        if (updatedTask.data && updatedTask.data.task) {
+          return updatedTask.data.task;
+        } else {
+          throw new Error("Invalid response from server");
+        }
       } else {
-        throw new Error('Invalid response from server');
+        throw new Error(updatedTask.message || "Error creating task");
       }
-    } else {
-      throw new Error(updatedTask.message || 'Error creating task');
+    } catch (error) {
+      console.log("Error creating task:", error.message);
+      throw new Error(error.message || "Error creating task");
     }
-  } catch (error) {
-    console.log('Error creating task:', error.message);
-    throw new Error(error.message || 'Error creating task');
   }
-});
+);
 
-export const deleteTasks = createAsyncThunk('deleteTasks/tasks', async (data, ThunkApi) => {
-  try {
-    const res = await ApiCall.delete(`/task/${data}`);
-    if (res.data.success) {
-      return data;
+export const deleteTasks = createAsyncThunk(
+  "deleteTasks/tasks",
+  async (data, ThunkApi) => {
+    try {
+      const res = await ApiCall.delete(`/task/${data}`);
+      if (res.data.success) {
+        return data;
+      }
+      throw new Error("Not deleted");
+    } catch (error) {
+      console.log(error);
     }
-    throw new Error('Not deleted');
-  } catch (error) {
-    console.log(error);
   }
-});
+);
 
 export const tasksSlice = createSlice({
-  name: 'tasks',
+  name: "tasks",
   initialState: {
     tasks: [],
     isTaskLoading: false,
