@@ -143,7 +143,7 @@ function RFIForm() {
         <Grid item xs={12} sm={12}>
           <TextField
             name="information"
-            label="Information"
+            label="INFORMATION REQUESTED:"
             type="text"
             variant="outlined"
             fullWidth
@@ -154,7 +154,7 @@ function RFIForm() {
         <Grid item xs={12} sm={12}>
           <TextField
             name="suggestions"
-            label="SUGGESTIONS"
+            label="SUGGESTIONS:"
             type="text"
             variant="outlined"
             fullWidth

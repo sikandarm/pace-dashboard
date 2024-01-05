@@ -38,7 +38,7 @@ const FabricatedItemDetail = () => {
   const { permissions: userPermissions } = loginUser.decodedToken;
   const canUpdateFabricatedItems = hasPermission(
     userPermissions,
-    PERMISSIONS.Update_FabricatedItems
+    PERMISSIONS.Update_Fabricated_Items
   );
 
   useEffect(() => {
