@@ -137,6 +137,7 @@ const Details = () => {
                     <Grid item xs={6}>
                       <ListItemText primary={column.label} />
                     </Grid>
+
                     <Grid item xs={6}>
                       {formData[column.id]}
                     </Grid>

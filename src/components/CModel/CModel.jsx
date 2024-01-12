@@ -18,6 +18,7 @@ import AddSequence from "./AddSequence";
 import EditSequence from "./EditSequence";
 import Numberlist from "./CallList";
 import AddSequenceTask from "./AddSequencetask";
+import AddBill from "./AddBill";
 
 export default function CModel(props) {
   const style = {
@@ -152,6 +153,13 @@ export default function CModel(props) {
             />
           ) : props.filter === "call-list" ? (
             <Numberlist setOpen={props.setOpen} />
+          ) : props.filter === "add-bill" ? (
+            <AddBill
+              setOpen={props.setOpen}
+              // permissions={props.permissions}
+              isLoading={props.isLoading}
+              data={props.data}
+            />
           ) : (
             ""
           )}

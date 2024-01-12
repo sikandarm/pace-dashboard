@@ -29,6 +29,8 @@ import UpdateFabrecatedItems from "./pages/Jobs/UpdateFabrecatedItem.jsx";
 import Sequence from "./pages/Sequence/Sequence.jsx";
 import SequenceDetail from "./pages/Sequence/Detail.jsx";
 import RFI from "./pages/PurchaseOrder/RFIForm.jsx";
+import BOL from "./pages/ShippingList/BillofLandind.jsx";
+import AddBill from "./pages/ShippingList/AddBill.jsx";
 // import PasswordResetForm from "./pages/PasswordResetPage.jsx";
 // ----------------------------------------------------------------------
 import { useDispatch, useSelector } from "react-redux";
@@ -71,6 +73,8 @@ export default function Router() {
         { path: "tasks", element: <Tasks /> },
         { path: "sequence", element: <Sequence /> },
         { path: "/sequence-detail/:id", element: <SequenceDetail /> },
+        { path: "/shipping-list", element: <BOL /> },
+        { path: "/Add-Bill", element: <AddBill /> },
         { path: "permissions", element: <Permissions dispatch={dispatch} /> },
       ],
     },
