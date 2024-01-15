@@ -112,7 +112,7 @@ const AddBill = () => {
     const billData = {
       billTitle,
       orderDate,
-      deliveryDate,
+      dilveryDate: deliveryDate,
       terms,
       shipVia,
       address,

@@ -497,7 +497,7 @@ const EditTask = (props) => {
 
           <img
             alt="fullscreen"
-            style={{ width: "100%", height: "auto", marginTop: "30px" }}
+            style={{ width: "100%", height: "600px", marginTop: "25px" }}
             src={fullscreenImage}
           />
         </div>
