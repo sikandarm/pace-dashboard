@@ -8,7 +8,7 @@ import {
   InputLabel,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { validateInput } from "../../utils/validateInput";
+// import { validateInput } from "../../utils/validateInput";
 import { showErrorToast, showSuccessToast } from "../../utils/Toast";
 import ApiCall from "../../utils/apicall";
 import { updateSequence } from "../../feature/sequenceSlice";
@@ -34,11 +34,12 @@ const EditSequence = (props) => {
       showErrorToast("Please select a job");
       return;
     }
-    if (!validateInput("sequenceName", SequenceName)) {
+    if (!SequenceName) {
+      showErrorToast("Please Enter Sequence Name");
       return;
     }
     const sequenceData = {
-      sequence_name: SequenceName,
+      sequence_name: SequenceName.sequence_name,
       job_id: jobid,
       id: props.data.id,
     };

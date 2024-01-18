@@ -295,6 +295,7 @@ export default function Sequence() {
                       )
                       .map((row) => {
                         const { id, sequence_name, Job, jobid } = row;
+                        console.log(row);
                         return (
                           <TableRow hover key={id} tabIndex={-1}>
                             <TableCell
