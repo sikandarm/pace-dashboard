@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
-import { forwardRef } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import PropTypes from "prop-types";
+import { forwardRef } from "react";
+import { Link as RouterLink } from "react-router-dom";
 // @mui
 // import { useTheme } from '@mui/material/styles';
-import { Box, Link } from '@mui/material';
+import { Box, Link } from "@mui/material";
 
 // ----------------------------------------------------------------------
 
@@ -27,12 +27,16 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
       sx={{
         width: 60,
         height: 60,
-        display: 'inline-flex',
+        display: "inline-flex",
         ...sx,
       }}
       {...other}
     >
-      <img alt="logo" style={{ borderRadius: '40px' }} src="./assets/images/logo.png" />
+      <img
+        alt="logo"
+        style={{ borderRadius: "40px" }}
+        src="./assets/images/logo.png"
+      />
     </Box>
   );
 
@@ -41,7 +45,7 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   }
 
   return (
-    <Link to="/" component={RouterLink} sx={{ display: 'contents' }}>
+    <Link to="/" component={RouterLink} sx={{ display: "contents" }}>
       {logo}
     </Link>
   );

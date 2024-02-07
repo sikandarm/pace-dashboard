@@ -274,7 +274,12 @@ export default function PurchaseOrder() {
                       <TableRow key={order.id}>
                         <TableCell>{order.company.name}</TableCell>
                         <TableCell>{order.vendor.vendor_name}</TableCell>
-                        <TableCell>{order.firstName.firstName}</TableCell>
+                        <TableCell>
+                          {order.firstName && order.firstName.firstName
+                            ? order.firstName.firstName
+                            : ""}
+                        </TableCell>
+
                         {/* <TableCell>{order.vendors.vendor_name}</TableCell> */}
                         {TABLE_HEAD.map((column) => (
                           <TableCell key={column.id}>

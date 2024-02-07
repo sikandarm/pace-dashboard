@@ -9,6 +9,7 @@ export default function CMultiSelect(props) {
       (p) => p.id === item.id && p.reason === item.reason
     );
   });
+
   const handleAutocompleteChange = (event, value) => {
     if (value) {
       props.selectedPermissions(

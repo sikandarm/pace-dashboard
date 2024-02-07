@@ -54,13 +54,16 @@ const EditTask = (props) => {
   };
 
   const handleSubmit = async () => {
-    if (
-      jobId === null ||
-      data.heatNo.length === 0 ||
-      data.estimatedHour === null ||
-      userId === null
-    ) {
-      toast("Fill the required fields");
+    if (!estimatedHour) {
+      toast("Please Enter Estimated Hour");
+      return;
+    }
+    if (jobId === null) {
+      toast("Please Select Job");
+      return;
+    }
+    if (selectedFile === null) {
+      toast("Please Attached a Diagram");
       return;
     }
     const formData = new FormData();
@@ -72,7 +75,7 @@ const EditTask = (props) => {
     // formData.append('startedAt', startDate);
     // formData.append('completedAt', endDate);
     formData.append("status", "pending");
-    formData.append("userId", Number(userId));
+    formData.append("userId", userId);
     formData.append("projectManager", data.projectManager);
     formData.append("QCI", data.QCI);
     formData.append("fitter", data.fitter);
@@ -148,7 +151,7 @@ const EditTask = (props) => {
         >
           <div style={{ width: "50%" }}>
             <CTextField
-              required={true}
+              // required={true}
               defaultValue={data.heatNo}
               margin="5px 0px"
               width={300}

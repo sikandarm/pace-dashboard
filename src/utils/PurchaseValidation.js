@@ -4,38 +4,92 @@ export const validatePurchaseOrderForm = (formData) => {
 
   // Define regex patterns for validation
   const nameRegex = /^[a-zA-Z\s]+$/;
-  const phoneRegex = /^\d{11}$/;
-  const emailRegex = /\S+@\S+\.\S+/;
-  const faxRegex = /^\+\d{1,3}-\d{1,3}-\d{3}-\d{4}$/;
   const numberRegex = /^-?\d+$/;
+  const emailRegex = /\S+@\S+\.\S+/;
+  const usPhoneRegex = /^\+\d{1} \(\d{3}\) \d{3}-\d{4}$/; // Updated US phone regex
+  const usFaxRegex = /^\+\d{1}-\d{3}-\d{3}-\d{4}$/; // Updated US fax regex
 
   // Helper function to check and trim a field
-  const validateField = (field, regex, fieldName) => {
+  const validateField = (field, regex, fieldName, errorMessage) => {
     if (!field) {
-      errors[fieldName] = `${fieldName} is required`;
-      valid = false;
+      // Skip validation if the field is empty and not required
+      if (fieldName !== "fax") {
+        errors[fieldName] = errorMessage || `${fieldName} is required`;
+        valid = false;
+      }
     } else if (regex && !regex.test(String(field))) {
-      errors[fieldName] = `${fieldName} is invalid`;
+      errors[fieldName] = errorMessage || `${fieldName} is invalid`;
       valid = false;
     }
   };
 
-  validateField(formData.company_id, null, "company_name");
-  validateField(formData.delivery_date, null, "delivery_date");
-  validateField(formData.vendor_id, null, "vendor_name");
-  validateField(formData.userId, null, "userId");
-  validateField(formData.order_date, null, "order_date");
-  validateField(formData.po_number, numberRegex, "po_number");
-  validateField(formData.phone, phoneRegex, "phone");
-  validateField(formData.term, nameRegex, "term");
-  validateField(formData.ship_via, nameRegex, "ship_via");
-  validateField(formData.placed_via, nameRegex, "placed_via");
-  validateField(formData.ship_to, nameRegex, "ship_to");
-  validateField(formData.order_by, nameRegex, "order_by");
-  validateField(formData.confirm_with, nameRegex, "confirm_with");
-  validateField(formData.address, nameRegex, "address");
-  validateField(formData.email, emailRegex, "email");
-  validateField(formData.fax, faxRegex, "fax");
+  // Validate fields with custom error messages
+  validateField(
+    formData.company_id,
+    null,
+    "company_name",
+    "Company Name is required"
+  );
+  validateField(
+    formData.delivery_date,
+    null,
+    "delivery_date",
+    "Delivery Date is required!"
+  );
+  validateField(
+    formData.vendor_id,
+    null,
+    "vendor_name",
+    "Vendor Name is required"
+  );
+  // validateField(formData.userId, null, "userId", "Please assign a user");
+  validateField(
+    formData.order_date,
+    null,
+    "order_date",
+    "Order Date is required"
+  );
+  validateField(
+    formData.po_number,
+    numberRegex,
+    "po_number",
+    "Invalid P0 Number Contain only Number"
+  );
+  validateField(
+    formData.phone,
+    usPhoneRegex,
+    "phone",
+    "Phone format is invalid. Please use the format: +1 (XXX) XXX-XXXX"
+  );
+  validateField(formData.term, null, "term", "Term is required");
+  validateField(formData.ship_via, null, "ship_via", "Ship Via is required");
+  validateField(
+    formData.placed_via,
+    null,
+    "placed_via",
+    "Placed Via is required"
+  );
+  validateField(formData.ship_to, null, "ship_to", "Ship To is required");
+  validateField(
+    formData.order_by,
+    nameRegex,
+    "order_by",
+    "Invalid Order By Contain only Alphabet"
+  );
+  validateField(
+    formData.confirm_with,
+    nameRegex,
+    "confirm_with",
+    "Invalid Confirm With Contain only Alphabet"
+  );
+  validateField(formData.address, nameRegex, "address", "Address is required");
+  validateField(formData.email, emailRegex, "email", "Email is required");
+  validateField(
+    formData.fax,
+    usFaxRegex,
+    "fax",
+    "Fax format is invalid. Please use the format: +1-XXX-XXX-XXXX"
+  );
 
   // Add more validation rules for other fields as needed
 

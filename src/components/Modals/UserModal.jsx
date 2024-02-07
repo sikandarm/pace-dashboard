@@ -50,10 +50,10 @@ const UserModal = (props) => {
       formattedValue += numbersOnly.slice(0, 3);
     }
     if (numbersOnly.length >= 4) {
-      formattedValue += `${numbersOnly.slice(3, 6)}`;
+      formattedValue += `-${numbersOnly.slice(3, 6)}`;
     }
     if (numbersOnly.length >= 7) {
-      formattedValue += `${numbersOnly.slice(6, 11)}`;
+      formattedValue += `-${numbersOnly.slice(6, 11)}`;
     }
     return formattedValue;
   };
@@ -65,6 +65,16 @@ const UserModal = (props) => {
   };
 
   const handleSubmit = () => {
+    console.log("==-==-=", data.ratePerHour);
+    if (!data.ratePerHour) {
+      showErrorToast("Please Add User RatePerHour");
+      return;
+    }
+    if (!phone) {
+      showErrorToast("Please Add User Phone Number");
+      return;
+    }
+
     //Validate Role
     if (!validateInput("role", role)) {
       return;

@@ -170,7 +170,8 @@ function PurchaseOrderForm() {
                   type="date"
                   variant="outlined"
                   fullWidth
-                  value={formData.delivery_date}
+                  InputLabelProps={{ shrink: true }}
+                  value={formData.delivery_date.toString().split("T")[0]}
                   onChange={handleChange}
                   error={formErrors.delivery_date !== undefined}
                   helperText={formErrors.delivery_date}
@@ -213,7 +214,8 @@ function PurchaseOrderForm() {
                   type="date"
                   variant="outlined"
                   fullWidth
-                  value={formData.order_date}
+                  InputLabelProps={{ shrink: true }}
+                  value={formData.order_date.toString().split("T")[0]}
                   onChange={handleChange}
                   error={formErrors.order_date !== undefined}
                   helperText={formErrors.order_date}

@@ -3,7 +3,7 @@ export const validateContactForm = (newContact) => {
   const errors = {};
 
   const nameRegex = /^[a-zA-Z\s]+$/;
-  const phoneRegex = /^\d{11}$/;
+  const phoneRegex = /^\+\d{1,2}\s\(\d{3}\)\s\d{3}-\d{4}$/;
 
   if (newContact.firstName.trim() === "") {
     errors.firstName = "First Name is required";
@@ -31,7 +31,9 @@ export const validateContactForm = (newContact) => {
     errors.phoneNumber = "Phone Number is required";
     valid = false;
   } else if (!phoneRegex.test(newContact.phoneNumber)) {
-    errors.phoneNumber = "Phone Number is invalid";
+    errors.phoneNumber =
+      "Phone format is invalid. Please use that format: +1 (XXX) XXX-XXXX.";
+
     valid = false;
     console.log(valid, "=-");
   }

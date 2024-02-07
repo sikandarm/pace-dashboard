@@ -1,7 +1,9 @@
+// Import necessary libraries or modules for date formatting
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ApiCall from "../../utils/apicall";
+import { fDate } from "../../utils/formatTime";
 import {
   Card,
   ListItem,
@@ -18,12 +20,10 @@ import {
   Table,
   TableRow,
   TableBody,
-  // TableHead,
 } from "@mui/material";
 import { HomeRounded } from "@material-ui/icons";
+
 const TABLE_HEAD = [
-  // { id: "company_name", label: "Company Name" },
-  // { id: "vendor_name", label: "Vendor Name" },
   { id: "address", label: "Address" },
   { id: "delivery_date", label: "Delivery Date" },
   { id: "confirm_with", label: "Confirm With" },
@@ -38,10 +38,7 @@ const TABLE_HEAD = [
   { id: "term", label: "Term" },
   { id: "fax", label: "Fax" },
 ];
-// const items = [
-//   { id: "inventory_id", label: "Items" },
-//   { id: "quantity", label: "Quantity" }
-// ];
+
 const Details = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState(null);
@@ -95,39 +92,7 @@ const Details = () => {
         <Paper>
           {formData && (
             <Card>
-              <ListItem style={{ borderBottom: "1px solid #e0e0e0" }}>
-                <Grid container style={{ marginBottom: "16px" }}>
-                  <Grid item xs={6}>
-                    <ListItemText />
-                    Company Name
-                  </Grid>
-                  <Grid item xs={6}>
-                    {formData.company.name}
-                  </Grid>
-                </Grid>
-              </ListItem>
-              <ListItem style={{ borderBottom: "1px solid #e0e0e0" }}>
-                <Grid container style={{ marginBottom: "16px" }}>
-                  <Grid item xs={6}>
-                    <ListItemText />
-                    Vendor Name
-                  </Grid>
-                  <Grid item xs={6}>
-                    {formData.vendor.vendor_name}
-                  </Grid>
-                </Grid>
-              </ListItem>
-              <ListItem style={{ borderBottom: "1px solid #e0e0e0" }}>
-                <Grid container style={{ marginBottom: "16px" }}>
-                  <Grid item xs={6}>
-                    <ListItemText />
-                    Assign To
-                  </Grid>
-                  <Grid item xs={6}>
-                    {formData.firstName.firstName}
-                  </Grid>
-                </Grid>
-              </ListItem>
+              {/* ... (your existing code) */}
               {TABLE_HEAD.map((column) => (
                 <ListItem
                   key={column.id}
@@ -137,9 +102,12 @@ const Details = () => {
                     <Grid item xs={6}>
                       <ListItemText primary={column.label} />
                     </Grid>
-
                     <Grid item xs={6}>
-                      {formData[column.id]}
+                      {/* Format dates to "mm/dd/yyyy" using toLocaleDateString */}
+                      {column.id === "delivery_date" ||
+                      column.id === "order_date"
+                        ? fDate(formData[column.id])
+                        : formData[column.id]}
                     </Grid>
                   </Grid>
                 </ListItem>
