@@ -6,7 +6,8 @@ export const validatePurchaseOrderForm = (formData) => {
   const nameRegex = /^[a-zA-Z\s]+$/;
   const numberRegex = /^-?\d+$/;
   const emailRegex = /\S+@\S+\.\S+/;
-  const usPhoneRegex = /^\+\d{1} \(\d{3}\) \d{3}-\d{4}$/; // Updated US phone regex
+  // const usPhoneRegex = /^\+\d{1} \(\d{3}\) \d{3}-\d{4}$/; // Updated US phone regex
+  const phoneNumberRegex = /^\d{10}$/;
   const usFaxRegex = /^\+\d{1}-\d{3}-\d{3}-\d{4}$/; // Updated US fax regex
 
   // Helper function to check and trim a field
@@ -57,9 +58,9 @@ export const validatePurchaseOrderForm = (formData) => {
   );
   validateField(
     formData.phone,
-    usPhoneRegex,
+    phoneNumberRegex,
     "phone",
-    "Phone format is invalid. Please use the format: +1 (XXX) XXX-XXXX"
+    "Phone number must be exactly 10 digits without country code:"
   );
   validateField(formData.term, null, "term", "Term is required");
   validateField(formData.ship_via, null, "ship_via", "Ship Via is required");
@@ -86,9 +87,9 @@ export const validatePurchaseOrderForm = (formData) => {
   validateField(formData.email, emailRegex, "email", "Email is required");
   validateField(
     formData.fax,
-    usFaxRegex,
+    phoneNumberRegex,
     "fax",
-    "Fax format is invalid. Please use the format: +1-XXX-XXX-XXXX"
+    "Fax number must be exactly 10 digits without country code:"
   );
 
   // Add more validation rules for other fields as needed

@@ -1,4 +1,3 @@
-// Import necessary libraries or modules for date formatting
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -22,6 +21,25 @@ import {
   TableBody,
 } from "@mui/material";
 import { HomeRounded } from "@material-ui/icons";
+
+// Utility function to format phone number as (123) 456-7890
+function formatPhoneNumber(phoneNumberString) {
+  var cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+  var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    var intlCode = "+1 ";
+    return [intlCode, "(", match[2], ") ", match[3], "-", match[4]].join("");
+  }
+  return null;
+}
+function formatfaxNumber(faxNumberString) {
+  var cleaned = ("" + faxNumberString).replace(/\D/g, "");
+  var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return ["+1", "-", match[2], "-", match[3], "-", match[4]].join("");
+  }
+  return null;
+}
 
 const TABLE_HEAD = [
   { id: "address", label: "Address" },
@@ -68,7 +86,7 @@ const Details = () => {
   return (
     <div>
       <Helmet>
-        <title>Purchase Order Details| Pace Purchase Order Details</title>
+        <title>Purchase Order Details | Pace Purchase Order Details</title>
       </Helmet>
       <Container>
         <Stack
@@ -81,7 +99,7 @@ const Details = () => {
             <Stack direction="row" alignItems="center" spacing={1}>
               <HomeRounded color="inherit" />
               <Typography variant="body1" color="textPrimary">
-                / PurchaseOrder Details
+                / Purchase Order Details
               </Typography>
             </Stack>
           </Breadcrumbs>
@@ -92,7 +110,6 @@ const Details = () => {
         <Paper>
           {formData && (
             <Card>
-              {/* ... (your existing code) */}
               {TABLE_HEAD.map((column) => (
                 <ListItem
                   key={column.id}
@@ -103,10 +120,13 @@ const Details = () => {
                       <ListItemText primary={column.label} />
                     </Grid>
                     <Grid item xs={6}>
-                      {/* Format dates to "mm/dd/yyyy" using toLocaleDateString */}
                       {column.id === "delivery_date" ||
                       column.id === "order_date"
                         ? fDate(formData[column.id])
+                        : column.id === "phone"
+                        ? formatPhoneNumber(formData[column.id])
+                        : column.id === "fax"
+                        ? formatfaxNumber(formData[column.id])
                         : formData[column.id]}
                     </Grid>
                   </Grid>

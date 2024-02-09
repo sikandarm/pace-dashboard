@@ -29,6 +29,7 @@ import Iconify from "../../components/iconify";
 import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 import { HomeRounded } from "@material-ui/icons";
 import ApiCall from "../../utils/apicall";
+
 const TABLE_HEAD = [
   // { id: "company", label: "Company Name", alignRight: false },
   // { id: "vendor_name", label: "Vendor Name", alignRight: false },
@@ -36,6 +37,25 @@ const TABLE_HEAD = [
   { id: "phone", label: "Phone", alignRight: false },
   { id: "status", label: "Status", alignRight: false },
 ];
+
+// Utility function to format phone number as (123) 456-7890
+function formatPhoneNumber(phoneNumberString) {
+  var cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+  var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    var intlCode = "+1 ";
+    return [intlCode, "(", match[2], ") ", match[3], "-", match[4]].join("");
+  }
+  return null;
+}
+function formatfaxNumber(faxNumberString) {
+  var cleaned = ("" + faxNumberString).replace(/\D/g, "");
+  var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return ["+1", "-", match[2], "-", match[3], "-", match[4]].join("");
+  }
+  return null;
+}
 
 export default function PurchaseOrder() {
   const [page, setPage] = useState(0);
@@ -213,7 +233,7 @@ export default function PurchaseOrder() {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <HomeRounded color="inherit" />
                 <Typography variant="body1" color="textPrimary">
-                  / PurchaseOrder
+                  / Purchase Orders
                 </Typography>
               </Stack>
             </Breadcrumbs>
@@ -283,7 +303,11 @@ export default function PurchaseOrder() {
                         {/* <TableCell>{order.vendors.vendor_name}</TableCell> */}
                         {TABLE_HEAD.map((column) => (
                           <TableCell key={column.id}>
-                            {order[column.id]}
+                            {column.id === "phone"
+                              ? formatPhoneNumber(order[column.id])
+                              : column.id === "fax"
+                              ? formatfaxNumber(order[column.id])
+                              : order[column.id]}
                           </TableCell>
                         ))}
                         <TableCell align="right" style={{ display: "flex" }}>

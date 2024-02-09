@@ -5,6 +5,8 @@ import { useDispatch } from "react-redux";
 import CModel from "../../components/CModel/CModel";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { fDate } from "../../utils/formatTime";
+
 import {
   Card,
   Table,
@@ -284,23 +286,14 @@ export default function BillofLanding() {
                   {filteredUsers
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, billTitle, address, dilveryDate, orderDate } =
-                        row;
+                      const {
+                        id,
+                        billTitle,
+                        address,
+                        deliveryDate,
+                        orderDate,
+                      } = row;
 
-                      const formattedDate = new Date(
-                        dilveryDate
-                      ).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      });
-                      const formattedDate2 = new Date(
-                        orderDate
-                      ).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      });
                       return (
                         <TableRow hover key={id} tabIndex={-1}>
                           <TableCell component="th" scope="row" padding="none">
@@ -315,8 +308,10 @@ export default function BillofLanding() {
                             </Stack>
                           </TableCell>
                           <TableCell align="left">{address}</TableCell>
-                          <TableCell align="left">{formattedDate}</TableCell>
-                          <TableCell align="left">{formattedDate2}</TableCell>
+                          <TableCell align="left">
+                            {fDate(deliveryDate)}
+                          </TableCell>
+                          <TableCell align="left">{fDate(orderDate)}</TableCell>
 
                           <TableCell align="right" style={{ display: "flex" }}>
                             {/* <MenuItem

@@ -16,6 +16,7 @@ import {
   Box,
   Stack,
   Breadcrumbs,
+  TextField,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { HomeRounded } from "@material-ui/icons";
@@ -214,28 +215,31 @@ const AddBill = () => {
               required={true}
               width="30%"
             />
-            <CTextField
-              margin="15px 10px"
+
+            <TextField
+              style={{ margin: "15px 10px", width: "30%" }}
+              name="dilverydate"
+              label="Delivery Date"
+              type="date"
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
               onChange={(event) => {
                 setDeliveryDate(event.target.value);
               }}
-              type="date"
-              name="dilverydate"
-              label="Delivery Date"
-              required={true}
-              width="30%"
             />
-            <CTextField
-              margin="15px 0px"
+
+            <TextField
+              style={{ margin: "15px 10px", width: "30%" }}
+              name="orderdate"
+              label="Order Date"
+              type="date"
+              variant="outlined"
+              InputLabelProps={{ shrink: true }}
               onChange={(event) => {
                 setOrderDate(event.target.value);
               }}
-              type="date"
-              name="orderdate"
-              label="Order Date"
-              required={true}
-              width="30%"
             />
+
             <CTextField
               margin="15px 10px"
               onChange={(event) => {
@@ -251,9 +255,15 @@ const AddBill = () => {
             >
               <InputLabel htmlFor="select-company">Select Company</InputLabel>
               <Select
+                labelId="select-company"
                 value={selectedCompany}
                 onChange={(e) => setSelectedCompany(e.target.value)}
                 id="select-company"
+                label="Select Company"
+                fullWidth
+                margin="dense"
+                variant="outlined"
+                sx={{ textAlign: "left" }}
               >
                 <MenuItem value="">
                   <em>Select Company</em>
@@ -276,6 +286,7 @@ const AddBill = () => {
                       Select PO
                     </InputLabel>
                     <Select
+                      labelId={`purchaseOrderId-${index}`}
                       value={item.purchaseOrderId}
                       onChange={(e) =>
                         handleInputChange(
@@ -285,6 +296,11 @@ const AddBill = () => {
                         )
                       }
                       id={`purchaseOrderId-${index}`}
+                      label="Select PO"
+                      fullWidth
+                      margin="dense"
+                      variant="outlined"
+                      sx={{ textAlign: "left" }}
                     >
                       <MenuItem value="">
                         <em>Select PO Number</em>
@@ -303,6 +319,7 @@ const AddBill = () => {
                       Select Fabricated Item
                     </InputLabel>
                     <Select
+                      labelId={`fabricatedItemId-${index}`}
                       value={item.fabricatedItemId}
                       onChange={(e) =>
                         handleInputChange(
@@ -312,6 +329,11 @@ const AddBill = () => {
                         )
                       }
                       id={`fabricatedItemId-${index}`}
+                      label="Select Fabricated Item"
+                      fullWidth
+                      margin="dense"
+                      variant="outlined"
+                      sx={{ textAlign: "left" }}
                     >
                       <MenuItem value="">
                         <em>Select Fabricated Item</em>

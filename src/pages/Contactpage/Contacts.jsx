@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-// import InputMask from "react-input-mask";
 import {
   Card,
   Table,
@@ -188,14 +187,11 @@ export default function Contacts() {
         const response = await ApiCall.post("/contact", newContactData);
 
         if (response.status === 201) {
-          //  const newContact = response.data;
           setFormErrors("");
           handleClose();
-          // window.location.reload();
           toast("Contact Added Successfully!");
 
           fetchContacts();
-          //   dispatch(getContacts(response.data));
           setNewContact({ ...initialNewContact });
         } else {
         }
@@ -215,10 +211,6 @@ export default function Contacts() {
         );
 
         if (response.status === 200) {
-          // const updatedContact = response.data;
-          // const updatedContacts = contacts.map((contact) =>
-          //   contact.id === updatedContact.id ? updatedContact : contact
-          // );
           handleClose();
           toast("Contact Updated Successfully!");
 
@@ -240,10 +232,6 @@ export default function Contacts() {
     setOpenUpdateModel(false);
     setOpen(false);
   };
-
-  // useEffect(() => {
-  //   dispatch(getContacts());
-  // }, []);
 
   const handleSearch = async () => {
     try {
@@ -268,6 +256,17 @@ export default function Contacts() {
     };
     handleSearchs();
   }, [filterName]);
+
+  // Utility function to format phone number as (123) 456-7890
+  function formatPhoneNumber(phoneNumberString) {
+    var cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      var intlCode = "+1 ";
+      return [intlCode, "(", match[2], ") ", match[3], "-", match[4]].join("");
+    }
+    return null;
+  }
 
   return (
     <>
@@ -509,7 +508,9 @@ export default function Contacts() {
                             </TableCell>
                             <TableCell align="left">{lastName}</TableCell>
                             <TableCell align="left">{email}</TableCell>
-                            <TableCell align="left">{phoneNumber}</TableCell>
+                            <TableCell align="left">
+                              {formatPhoneNumber(phoneNumber)}
+                            </TableCell>
                             <TableCell
                               align="right"
                               style={{ display: "flex" }}

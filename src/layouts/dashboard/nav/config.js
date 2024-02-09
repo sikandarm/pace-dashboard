@@ -12,11 +12,11 @@ const icon = (name) => (
 );
 
 const navConfig = [
-  {
-    title: "dashboard",
-    path: "/dashboard/app",
-    icon: icon("ic_analytics"),
-  },
+  // {
+  //   title: "dashboard",
+  //   path: "/dashboard/app",
+  //   icon: icon("ic_analytics"),
+  // },
   {
     title: "Permissions",
     path: "/permissions",
@@ -98,7 +98,7 @@ const navConfig = [
     ],
   },
   {
-    title: "PurchaseOrder",
+    title: "Purchase Orders",
     path: "/purchaseorder",
     icon: icon("ic_po"),
     requiredPermission: [

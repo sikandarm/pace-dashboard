@@ -49,7 +49,7 @@ export default function Router() {
       ),
       children: [
         { element: <Navigate to="/users" />, index: true },
-        { path: "/dashboard/app", element: <DashboardAppPage /> },
+        // { path: "/dashboard/app", element: <DashboardAppPage /> },
         { path: "users", element: <Users dispatch={dispatch} /> },
         { path: "roles", element: <Roles /> },
         { path: "jobs", element: <Jobs /> },

@@ -3,7 +3,8 @@ export const validateCompanyForm = (formData) => {
   const errors = {};
   // console.log(")(()(",formData)
   const nameRegex = /^[a-zA-Z\s]+$/;
-  const phoneRegex = /^\+\d{1,2}\s\(\d{3}\)\s\d{3}-\d{4}$/;
+  // const phoneRegex = /^\+\d{1,2}\s\(\d{3}\)\s\d{3}-\d{4}$/;
+  const phoneRegex = /^\d{10}$/;
   const faxRegex = /^\+\d{1,2}-\d{3}-\d{3}-\d{4}$/;
 
   if (formData.name.trim() === "") {
@@ -31,16 +32,15 @@ export const validateCompanyForm = (formData) => {
     valid = false;
   } else if (!phoneRegex.test(formData.phone)) {
     errors.phone =
-      "Phone format is invalid. Please use that format: +1 (XXX) XXX-XXXX";
+      "Phone number must be exactly 10 digits without country code:";
     valid = false;
     console.log(valid, "=-");
   }
   if (formData.fax.trim() === "") {
     // errors.fax = "fax is required";
     valid = true;
-  } else if (!faxRegex.test(formData.fax.trim())) {
-    errors.fax =
-      "Fax format is invalid. Please use that format: +1-XXX-XXX-XXXX";
+  } else if (!phoneRegex.test(formData.fax.trim())) {
+    errors.fax = "Fax number must be exactly 10 digits without country code:";
     valid = false;
     console.log(valid);
   }

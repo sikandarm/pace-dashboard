@@ -149,11 +149,17 @@ function PurchaseOrderForm() {
                 <FormControl fullWidth>
                   <InputLabel htmlFor="company_id">Select Company</InputLabel>
                   <Select
+                    labelId="company_id"
                     name="company_id"
                     value={formData.company_id}
                     onChange={handleChange}
                     error={formErrors.company_id !== undefined}
                     required
+                    label="Select Company"
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    sx={{ textAlign: "left" }}
                   >
                     {companies.map((company) => (
                       <MenuItem key={company.id} value={company.id}>
@@ -193,11 +199,17 @@ function PurchaseOrderForm() {
                 <FormControl fullWidth>
                   <InputLabel htmlFor="vendor_id">Select Vendor</InputLabel>
                   <Select
+                    labelId="vendor_id"
                     name="vendor_id"
                     value={formData.vendor_id}
                     onChange={handleChange}
                     error={formErrors.vendor_id !== undefined}
+                    label="Select User"
                     required
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    sx={{ textAlign: "left" }}
                   >
                     {vendors.map((vendor) => (
                       <MenuItem key={vendor.id} value={vendor.id}>
@@ -345,10 +357,16 @@ function PurchaseOrderForm() {
                 <FormControl fullWidth>
                   <InputLabel htmlFor="userId">Assign To</InputLabel>
                   <Select
+                    labelId="vendor_id"
                     name="userId"
                     value={formData.userId}
                     onChange={handleChange}
                     error={formErrors.userId !== undefined}
+                    label="Select User"
+                    fullWidth
+                    margin="dense"
+                    variant="outlined"
+                    sx={{ textAlign: "left" }}
                   >
                     {user.map((user) => (
                       <MenuItem key={user.id} value={user.id}>

@@ -28,6 +28,7 @@ import { HomeRounded } from "@material-ui/icons";
 import { hasPermission, PERMISSIONS } from "../../utils/hasPermission";
 import Iconify from "../../components/iconify";
 import { validateCompanyForm } from "../../utils/companyValidations";
+
 const TABLE_HEAD = [
   { id: "name", label: "Name", alignRight: false },
   { id: "email", label: "Email", alignRight: false },
@@ -35,6 +36,7 @@ const TABLE_HEAD = [
   { id: "phone", label: "Phone", alignRight: false },
   { id: "fax", label: "Fax", alignRight: false },
 ];
+
 const CompanyList = () => {
   const [companies, setCompanies] = useState([]);
   const [filterName, setFilterName] = useState("");
@@ -122,7 +124,6 @@ const CompanyList = () => {
   }, [page]);
 
   const handleEditCompanySubmit = async () => {
-    // console.log("+++++", editFormData);
     const values = validateCompanyForm(editFormData);
     setFormErrors(values);
     if (Object.keys(values).length === 0) {
@@ -131,19 +132,9 @@ const CompanyList = () => {
           `/company/${editFormData.id}`,
           editFormData
         );
-        // console.log("resonse", response.data.data.company);
-
         if (response.status === 200) {
           fetchCompanies();
           toast("Company Updated Successfully!");
-          // var updatedCompany = response.data.data.company;
-          // var updatedCompanies = companies.map((company) =>
-          //   company.id === updatedCompany.id ? updatedCompany : company
-          // );
-          //   setCompanies(updatedCompanies);
-          // window.location.reload();
-          //console.log(updatedCompanies, "11111");
-          //console.log("Company edited successfully:", response.data);
           setEditFormData({
             name: "",
             email: "",
@@ -153,7 +144,6 @@ const CompanyList = () => {
           });
           handleClose();
           setOpenUpdateModel(false);
-        } else {
         }
       } catch (error) {
         console.error("Error editing company:", error);
@@ -168,7 +158,6 @@ const CompanyList = () => {
         fetchCompanies();
         toast("Company Deleted Successfully!");
         setCompanies((company) => company.filter((order) => order.id !== id));
-      } else {
       }
     } catch (error) {
       console.error("An error occurred:", error);
@@ -215,7 +204,6 @@ const CompanyList = () => {
     if (Object.keys(values).length === 0) {
       try {
         const response = await ApiCall.post("/company", formData);
-        // console.log("Company added successfully:", response.data);
         if (response) {
           fetchCompanies();
           toast("Company Added Successfully!");
@@ -276,6 +264,25 @@ const CompanyList = () => {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - searchResults.length) : 0;
   const isNotFound = !searchResults.length && !!filterName;
+
+  // Utility function to format phone number as (123) 456-7890
+  function formatPhoneNumber(phoneNumberString) {
+    var cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      var intlCode = "+1 ";
+      return [intlCode, "(", match[2], ") ", match[3], "-", match[4]].join("");
+    }
+    return null;
+  }
+  function formatfaxNumber(faxNumberString) {
+    var cleaned = ("" + faxNumberString).replace(/\D/g, "");
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      return ["+1", "-", match[2], "-", match[3], "-", match[4]].join("");
+    }
+    return null;
+  }
 
   return (
     <div>
@@ -441,9 +448,15 @@ const CompanyList = () => {
                       <TableRow key={order.id}>
                         {TABLE_HEAD.map((column) => (
                           <TableCell key={column.id}>
-                            {order[column.id]}
+                            {/* Check if column is phone or fax, if yes, format the value */}
+                            {column.id === "phone"
+                              ? formatPhoneNumber(order[column.id])
+                              : column.id === "fax"
+                              ? formatfaxNumber(order[column.id])
+                              : order[column.id]}
                           </TableCell>
                         ))}
+
                         <TableCell align="right" style={{ display: "flex" }}>
                           {canEditCompany && (
                             <MenuItem
