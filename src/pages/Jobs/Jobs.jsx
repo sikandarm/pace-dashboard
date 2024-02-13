@@ -238,9 +238,9 @@ export default function Jobs(props) {
   const handleDetail = (id) => {
     navigate(`/detail-Job/${id}`);
   };
-  const handleOpenList = () => {
-    navigate("/shipping-list");
-  };
+  // const handleOpenList = () => {
+  //   navigate("/shipping-list");
+  // };
 
   useEffect(() => {
     dispatch(getJobs());
@@ -288,13 +288,13 @@ export default function Jobs(props) {
               </Stack>
             </Breadcrumbs>
             <div style={{ display: "flex", gap: "10px" }}>
-              <Button
+              {/* <Button
                 onClick={handleOpenList}
                 variant="contained"
                 startIcon={<Iconify icon="eva:plus-fill" />}
               >
                 Bill of Lading
-              </Button>
+              </Button> */}
               {canExportJob && (
                 <Button
                   onClick={handleExport}

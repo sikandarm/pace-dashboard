@@ -22,10 +22,10 @@ function PurchaseOrderForm() {
   const { id } = useParams();
   const [formErrors, setFormErrors] = useState({});
   const [formData, setFormData] = useState({
-    company_id: "",
+    // company_id: "",
     delivery_date: "",
     confirm_with: "",
-    vendor_id: "",
+    vendor_name: "",
     userId: "",
     order_date: "",
     placed_via: "",
@@ -39,8 +39,8 @@ function PurchaseOrderForm() {
     term: "",
     fax: "",
     status: "",
+    company_name: "",
   });
-
   const [companies, setCompanies] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [user, setUser] = useState([]);
@@ -117,7 +117,7 @@ function PurchaseOrderForm() {
         }
       } else {
         if (Object.keys(values.errors).length === 0) {
-          console.log("_______");
+          console.log("_______", formData);
           response = await ApiCall.post("/purchaseorder", formData);
 
           if (response.status === 200 || response.status === 201) {
@@ -150,8 +150,8 @@ function PurchaseOrderForm() {
                   <InputLabel htmlFor="company_id">Select Company</InputLabel>
                   <Select
                     labelId="company_id"
-                    name="company_id"
-                    value={formData.company_id}
+                    name="company_name"
+                    value={formData ? formData.company_name : ""}
                     onChange={handleChange}
                     error={formErrors.company_id !== undefined}
                     required
@@ -200,8 +200,8 @@ function PurchaseOrderForm() {
                   <InputLabel htmlFor="vendor_id">Select Vendor</InputLabel>
                   <Select
                     labelId="vendor_id"
-                    name="vendor_id"
-                    value={formData.vendor_id}
+                    name="vendor_name"
+                    value={formData ? formData.vendor_name : ""}
                     onChange={handleChange}
                     error={formErrors.vendor_id !== undefined}
                     label="Select User"

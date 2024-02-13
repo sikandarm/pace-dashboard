@@ -214,7 +214,7 @@ export default function BillofLanding() {
             <Stack direction="row" alignItems="center" spacing={1}>
               <HomeRounded color="inherit" />
               <Typography variant="body1" color="textPrimary">
-                / Shipping List
+                / Bill of Lading
               </Typography>
             </Stack>
           </Breadcrumbs>

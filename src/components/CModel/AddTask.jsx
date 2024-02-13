@@ -284,6 +284,7 @@ const EditTask = (props) => {
           <div style={{ width: "50%" }}>
             <CTextField
               required={true}
+              type="number"
               margin="5px 0px"
               width={300}
               fullWidth={false}

@@ -90,16 +90,26 @@ const EditJob = (props) => {
         <div>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={["DatePicker"]}>
-              <DatePicker
-                label="Start Date"
-                value={startDate}
-                onChange={(newValue) => setJobStartDate(newValue)}
-              />
-              <DatePicker
-                label="End Date"
-                value={endDate}
-                onChange={(newValue) => setJobEndDate(newValue)}
-              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "20px",
+                  width: "100%",
+                }}
+              >
+                <DatePicker
+                  label="Start Date"
+                  value={startDate}
+                  onChange={(newValue) => setJobStartDate(newValue)}
+                />
+
+                <DatePicker
+                  label="End Date"
+                  value={endDate}
+                  onChange={(newValue) => setJobEndDate(newValue)}
+                />
+              </div>
             </DemoContainer>
           </LocalizationProvider>
         </div>

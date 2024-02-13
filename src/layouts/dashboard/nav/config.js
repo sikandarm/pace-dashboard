@@ -68,6 +68,12 @@ const navConfig = [
     ],
   },
   {
+    title: "Bill of Lading",
+    path: "/shipping-list",
+    icon: icon("ic_bill"),
+    requiredPermission: [PERMISSIONS.BIll_of_Lading],
+  },
+  {
     title: "Sequence",
     path: "/sequence",
     icon: icon("ic_sequence"),

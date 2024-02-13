@@ -55,6 +55,7 @@ const PERMISSIONS = {
   COLLABORATE_ON_MICROSOFT_WHITEBOARD: "collaborate_on_microsoft_whiteboard",
   Make_Call: "make_call",
   Download_Diagram: "download_diagram",
+  BIll_of_Lading: "bill_of_lading",
 };
 
 export default PERMISSIONS;

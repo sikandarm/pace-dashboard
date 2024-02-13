@@ -2,7 +2,9 @@ export const validateCompanyForm = (formData) => {
   let valid = true;
   const errors = {};
   // console.log(")(()(",formData)
-  const nameRegex = /^[a-zA-Z\s]+$/;
+  const nameRegex = /^[a-zA-Z\s'.,!?]+$/;
+  const addressRegex = /^[a-zA-Z0-9\s',#]+$/;
+
   // const phoneRegex = /^\+\d{1,2}\s\(\d{3}\)\s\d{3}-\d{4}$/;
   const phoneRegex = /^\d{10}$/;
   const faxRegex = /^\+\d{1,2}-\d{3}-\d{3}-\d{4}$/;
@@ -11,7 +13,7 @@ export const validateCompanyForm = (formData) => {
     errors.name = "name is required";
     valid = false;
   } else if (!nameRegex.test(formData.name.trim())) {
-    errors.name = "name is invalid";
+    errors.name = "Name is invalid";
     valid = false;
   }
 
@@ -21,10 +23,10 @@ export const validateCompanyForm = (formData) => {
     errors.email = "Email is invalid";
   }
   if (formData.address.trim() === "") {
-    errors.address = "address is required";
+    errors.address = "Address is required";
     valid = false;
-  } else if (!nameRegex.test(formData.address.trim())) {
-    errors.address = "address is invalid";
+  } else if (!addressRegex.test(formData.address.trim())) {
+    errors.address = "Address is invalid";
     valid = false;
   }
   if (!formData.phone) {

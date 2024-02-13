@@ -1,52 +1,75 @@
-import React, {  useState } from 'react';
-import CTextField from '../CTextField/CTextField';
-import { Button } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import CSwitch from '../CSwitch/CSwitch';
-import { createInventory } from '../../feature/inventorySlice';
-import CSelect from '../CSelect/CSelect';
-import { toast } from 'react-toastify';
-import { validateionInverntory } from '../../utils/validationInventory';
+import React, { useState } from "react";
+import CTextField from "../CTextField/CTextField";
+import { Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import CSwitch from "../CSwitch/CSwitch";
+import { createInventory } from "../../feature/inventorySlice";
+import CSelect from "../CSelect/CSelect";
+import { toast } from "react-toastify";
+import { validateionInverntory } from "../../utils/validationInventory";
 const AddInventory = (props) => {
   const dispatch = useDispatch();
   const [inventoryData, setInventoryData] = useState({
-    ediStdNomenclature: '',
-    aiscManualLabel: '',
-    weight: '',
-    depth: '',
-    grade: '',
-    poNumber: '',
-    heatNumber: '',
-    lengthReceivedFoot: '',
-    lengthReceivedInch: '',
-    quantity: '',
-    poPulledFromNumber: '',
-    lengthUsedFoot: '',
-    lengthUsedInch: '',
-    lengthRemainingFoot: '',
-    lengthRemainingInch: '',
+    ediStdNomenclature: "",
+    aiscManualLabel: "",
+    weight: "",
+    depth: "",
+    grade: "",
+    poNumber: "",
+    heatNumber: "",
+    lengthReceivedFoot: "",
+    lengthReceivedInch: "",
+    quantity: "",
+    poPulledFromNumber: "",
+    lengthUsedFoot: "",
+    lengthUsedInch: "",
+    lengthRemainingFoot: "",
+    lengthRemainingInch: "",
   });
   const [orderArrivedInFull, setOrderArrivedInFull] = useState(false);
   const [orderArrivedCMTR, setOrderArrivedCMTR] = useState(false);
-  const shapeData = ['2L', 'C', 'HP', 'HSS', 'L', 'M', 'MC', 'MT', 'PIPE', 'S', 'ST', 'W', 'WT'];
-  const [selectShape, setSelectedShape] = useState('');
-  const [itemType, setItemType] = useState('');
-  const selectItemType = ['stock', 'job'];
+  const shapeData = [
+    "2L",
+    "C",
+    "HP",
+    "HSS",
+    "L",
+    "M",
+    "MC",
+    "MT",
+    "PIPE",
+    "S",
+    "ST",
+    "W",
+    "WT",
+  ];
+  const [selectShape, setSelectedShape] = useState("");
+  const [itemType, setItemType] = useState("");
+  const selectItemType = ["stock", "job"];
   const handleChange = (event) => {
-    setInventoryData((prv) => ({ ...prv, [event.target.name]: event.target.value }));
+    setInventoryData((prv) => ({
+      ...prv,
+      [event.target.name]: event.target.value,
+    }));
   };
 
   const handleSubmit = () => {
     const shape = selectShape;
-    let finalData = { ...inventoryData, orderArrivedCMTR, orderArrivedInFull, shape, itemType };
-    if (validateionInverntory({ ...finalData })) {
+    let finalData = {
+      ...inventoryData,
+      orderArrivedCMTR,
+      orderArrivedInFull,
+      shape,
+      itemType,
+    };
+    if (finalData) {
       dispatch(createInventory(finalData)).then((res) => {
-        if (res.type === 'createInventory/Inventory/rejected') {
+        if (res.type === "createInventory/Inventory/rejected") {
           toast(res.payload);
           return;
         }
-        if (res.type === 'createInventory/Inventory/fulfilled') {
-          toast('Inventory created successfully !');
+        if (res.type === "createInventory/Inventory/fulfilled") {
+          toast("Inventory created successfully !");
           props.setOpen(false);
         }
       });
@@ -54,22 +77,31 @@ const AddInventory = (props) => {
     return;
   };
   return (
-    <div style={{ overflowY: 'scroll', maxHeight: '550px', overflowX: 'hidden' }}>
+    <div
+      style={{ overflowY: "scroll", maxHeight: "550px", overflowX: "hidden" }}
+    >
       <div
         style={{
-          display: 'flex',
-          width: '100%',
-          flexDirection: 'column',
-          alignItems: 'center',
-          background: '#2065D1',
+          display: "flex",
+          width: "100%",
+          flexDirection: "column",
+          alignItems: "center",
+          background: "#2065D1",
           borderRadius: 10,
-          color: 'white',
-          marginBottom: '20px',
+          color: "white",
+          marginBottom: "20px",
         }}
       >
         <p>Add Inventory</p>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-around",
+        }}
+      >
         <CTextField
           margin="5px 0px"
           width={300}
@@ -99,13 +131,13 @@ const AddInventory = (props) => {
           width={300}
           fullWidth={false}
           onChange={handleChange}
-          type={'Number'}
+          type={"Number"}
           name="weight"
           label="Weight"
         />
         <CTextField
           margin="5px 0px"
-          type={'Number'}
+          type={"Number"}
           width={300}
           fullWidth={false}
           onChange={handleChange}
@@ -152,7 +184,7 @@ const AddInventory = (props) => {
           onChange={handleChange}
           name="lengthReceivedFoot"
           label="Length Received Foot"
-          type={'Number'}
+          type={"Number"}
         />
         <CTextField
           margin="5px 0px"
@@ -161,7 +193,7 @@ const AddInventory = (props) => {
           onChange={handleChange}
           name="lengthReceivedInch"
           label="Length Received Inch"
-          type={'Number'}
+          type={"Number"}
         />
         <CTextField
           margin="5px 0px"
@@ -170,7 +202,7 @@ const AddInventory = (props) => {
           onChange={handleChange}
           name="quantity"
           label="Quantity"
-          type={'Number'}
+          type={"Number"}
         />
         <CTextField
           margin="5px 0px"
@@ -187,7 +219,7 @@ const AddInventory = (props) => {
           onChange={handleChange}
           name="lengthUsedFoot"
           label="Length Used Foot"
-          type={'Number'}
+          type={"Number"}
         />
         <CTextField
           margin="5px 0px"
@@ -196,7 +228,7 @@ const AddInventory = (props) => {
           onChange={handleChange}
           name="lengthUsedInch"
           label="Length Used Inch"
-          type={'Number'}
+          type={"Number"}
         />
         <CTextField
           margin="5px 0px"
@@ -205,26 +237,26 @@ const AddInventory = (props) => {
           onChange={handleChange}
           name="lengthRemainingInch"
           label="Length Remaining Inch"
-          type={'Number'}
+          type={"Number"}
         />
         <div
           style={{
-            display: 'flex',
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            margin: '20px 5px',
+            display: "flex",
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            margin: "20px 5px",
           }}
         >
           <div
             style={{
-              display: 'flex',
-              width: '50%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              margin: '0px 10px',
+              display: "flex",
+              width: "50%",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              margin: "0px 10px",
             }}
           >
             Order Arrived In Full
@@ -236,12 +268,12 @@ const AddInventory = (props) => {
           </div>
           <div
             style={{
-              display: 'flex',
-              width: '50%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              margin: '0px 10px',
+              display: "flex",
+              width: "50%",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              margin: "0px 10px",
             }}
           >
             Order Arrived CMTR
@@ -259,15 +291,15 @@ const AddInventory = (props) => {
           onChange={handleChange}
           name="lengthRemainingFoot"
           label="Length Remaining Foot"
-          type={'Number'}
+          type={"Number"}
         />
         <Button
           disabled={props.isLoading}
           onClick={handleSubmit}
           variant="outlined"
-          sx={{ width: '100%', margin: '10px 10px 0px 10px' }}
+          sx={{ width: "100%", margin: "10px 10px 0px 10px" }}
         >
-          {props.isLoading ? 'Loading...' : 'Submit'}
+          {props.isLoading ? "Loading..." : "Submit"}
         </Button>
       </div>
     </div>

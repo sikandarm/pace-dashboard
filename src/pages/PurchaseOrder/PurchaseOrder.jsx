@@ -237,6 +237,14 @@ export default function PurchaseOrder() {
                 </Typography>
               </Stack>
             </Breadcrumbs>
+            <Button
+              onClick={() => navigate("/rfi-response")}
+              variant="contained"
+              startIcon={<Iconify icon="eva:plus-fill" />}
+              style={{ marginLeft: "47%" }}
+            >
+              RFI Response
+            </Button>
             {canAddPurchaseOrder && (
               <Button
                 onClick={() => navigate("/purchaseorderform")}
@@ -247,6 +255,7 @@ export default function PurchaseOrder() {
               </Button>
             )}
           </Stack>
+
           <TableContainer component={Paper}>
             <div
               style={{
@@ -277,9 +286,9 @@ export default function PurchaseOrder() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Company Name</TableCell>
-                  <TableCell>Vendor Name</TableCell>
-                  <TableCell>Assign To</TableCell>
+                  <TableCell>Company</TableCell>
+                  <TableCell>Vendor</TableCell>
+                  {/* <TableCell>Assign To</TableCell> */}
                   {TABLE_HEAD.map((column) => (
                     <TableCell key={column.id}>{column.label}</TableCell>
                   ))}
@@ -289,16 +298,19 @@ export default function PurchaseOrder() {
               <TableBody>
                 {Array.isArray(searchResults) &&
                   searchResults
+                    .sort(
+                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((order) => (
                       <TableRow key={order.id}>
                         <TableCell>{order.company.name}</TableCell>
                         <TableCell>{order.vendor.vendor_name}</TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           {order.firstName && order.firstName.firstName
                             ? order.firstName.firstName
                             : ""}
-                        </TableCell>
+                        </TableCell> */}
 
                         {/* <TableCell>{order.vendors.vendor_name}</TableCell> */}
                         {TABLE_HEAD.map((column) => (

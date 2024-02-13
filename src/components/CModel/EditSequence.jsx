@@ -20,6 +20,7 @@ const EditSequence = (props) => {
   });
   const [jobid, setJobid] = useState("");
   const [job, setjob] = useState([]);
+  const [updatejob, setupdatejob] = useState(props ? props.data.jobid : "");
 
   useEffect(() => {
     const getjob = async () => {
@@ -30,7 +31,7 @@ const EditSequence = (props) => {
   }, []);
 
   const handleSubmit = () => {
-    if (!jobid) {
+    if (!updatejob) {
       showErrorToast("Please select a job");
       return;
     }
@@ -40,7 +41,7 @@ const EditSequence = (props) => {
     }
     const sequenceData = {
       sequence_name: SequenceName.sequence_name,
-      job_id: jobid,
+      job_id: updatejob,
       id: props.data.id,
     };
     dispatch(updateSequence(sequenceData)).then((res) => {
@@ -57,7 +58,7 @@ const EditSequence = (props) => {
   };
 
   const handleJobSelection = (event) => {
-    setJobid(event.target.value);
+    setupdatejob(event.target.value);
   };
   return (
     <div>
@@ -88,7 +89,15 @@ const EditSequence = (props) => {
         />
         <FormControl fullWidth>
           <InputLabel htmlFor="label">Select Job</InputLabel>
-          <Select value={jobid} onChange={handleJobSelection} id="label">
+          <Select
+            value={updatejob}
+            onChange={handleJobSelection}
+            id="label"
+            label="Select Job"
+            margin="dense"
+            variant="outlined"
+            sx={{ textAlign: "left" }}
+          >
             <MenuItem value="">
               <em>Select a Job</em>
             </MenuItem>

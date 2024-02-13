@@ -82,7 +82,15 @@ const AddSequence = (props) => {
         />
         <FormControl fullWidth>
           <InputLabel htmlFor="label">Select Job</InputLabel>
-          <Select value={jobid} onChange={handleJobSelection} id="label">
+          <Select
+            value={jobid}
+            onChange={handleJobSelection}
+            name="label"
+            label="Select Job"
+            margin="dense"
+            variant="outlined"
+            sx={{ textAlign: "left" }}
+          >
             <MenuItem value="">
               <em>Select a Job</em>
             </MenuItem>

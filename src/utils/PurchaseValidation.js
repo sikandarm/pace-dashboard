@@ -26,7 +26,7 @@ export const validatePurchaseOrderForm = (formData) => {
 
   // Validate fields with custom error messages
   validateField(
-    formData.company_id,
+    formData.company_name,
     null,
     "company_name",
     "Company Name is required"
@@ -38,7 +38,7 @@ export const validatePurchaseOrderForm = (formData) => {
     "Delivery Date is required!"
   );
   validateField(
-    formData.vendor_id,
+    formData.vendor_name,
     null,
     "vendor_name",
     "Vendor Name is required"
